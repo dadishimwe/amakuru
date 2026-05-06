@@ -81,6 +81,8 @@ export default function AmakuruPage() {
   const [submitted, setSubmitted] = useState(false)
   const [heroReady, setHeroReady] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
+  const GOOGLE_FORM_URL =
+    "https://docs.google.com/forms/d/e/1FAIpQLSdNp80ZyVHpEwL5Z49K-8k9ZfDUIRlJjZWsSJunKTLWuxhd3Q/viewform?embedded=true"
   const handleIntroDone = useCallback(() => {
     setHeroReady(true)
   }, [])
@@ -561,7 +563,12 @@ export default function AmakuruPage() {
           </p>
           {!submitted ? (
             <form
-              onSubmit={e => { e.preventDefault(); if (email) setSubmitted(true) }}
+              onSubmit={e => {
+                e.preventDefault()
+                if (!email) return
+                window.open(GOOGLE_FORM_URL, "_blank", "noopener,noreferrer")
+                setSubmitted(true)
+              }}
               className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
             >
               <input
@@ -576,13 +583,13 @@ export default function AmakuruPage() {
                 type="submit"
                 className="px-8 py-3 bg-[#111] text-white text-sm rounded-xl hover:bg-[#333] transition-colors tracking-widest font-medium"
               >
-                JOIN
+                SUBSCRIBE
               </button>
             </form>
           ) : (
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-emerald-600/20 bg-emerald-50 text-emerald-700 text-sm">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {"Subscribed. We’ll email you when early access opens."}
+              {"Thanks — check the Google Form tab to complete signup."}
             </div>
           )}
         </div>

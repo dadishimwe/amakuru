@@ -18,6 +18,8 @@ const NAV_STYLE = {
 
 export function MobileNav() {
   const [open, setOpen] = useState(false)
+  const GOOGLE_FORM_URL =
+    "https://docs.google.com/forms/d/e/1FAIpQLSdNp80ZyVHpEwL5Z49K-8k9ZfDUIRlJjZWsSJunKTLWuxhd3Q/viewform?embedded=true"
 
   const close = () => setOpen(false)
 
@@ -46,9 +48,15 @@ export function MobileNav() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="text-[11px] px-4 py-2 rounded-xl border border-black/10 text-black/60 hover:text-black hover:border-black/20 hover:bg-black/[0.03] transition-all duration-200 tracking-wide hidden md:block" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+            <a
+              href={GOOGLE_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] px-4 py-2 rounded-xl border border-black/10 text-black/60 hover:text-black hover:border-black/20 hover:bg-black/[0.03] transition-all duration-200 tracking-wide hidden md:block"
+              style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+            >
               SUBSCRIBE NOW
-            </button>
+            </a>
 
             {/* Burger — mobile only */}
             <button
@@ -103,9 +111,16 @@ export function MobileNav() {
               </a>
             ))}
             <div className="mt-1 px-2 pb-1">
-              <button className="w-full text-[11px] px-4 py-2.5 rounded-xl border border-black/10 text-black/60 hover:text-black hover:border-black/20 hover:bg-black/[0.03] transition-all duration-200 tracking-wide" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-                START BUILDING
-              </button>
+              <a
+                href={GOOGLE_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={close}
+                className="w-full text-center block text-[11px] px-4 py-2.5 rounded-xl border border-black/10 text-black/60 hover:text-black hover:border-black/20 hover:bg-black/[0.03] transition-all duration-200 tracking-wide"
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+              >
+                SUBSCRIBE NOW
+              </a>
             </div>
           </div>
         </div>
