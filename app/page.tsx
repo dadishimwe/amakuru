@@ -598,9 +598,9 @@ export default function AmakuruPage() {
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
             {[
               { label: "Platform",     href: "#platform" },
-              { label: "Agents",       href: "#agents" },
+              { label: "Capabilities", href: "#agents" },
               { label: "Workflow",     href: "#workflow" },
-              { label: "Integrations", href: "#integrations" },
+              { label: "Ecosystem",    href: "#integrations" },
               { label: "Live",         href: "#live" },
             ].map(l => (
               <a key={l.label} href={l.href} className="text-xs text-black/35 hover:text-black/70 transition-colors tracking-widest">{l.label}</a>
@@ -613,7 +613,6 @@ export default function AmakuruPage() {
               { label: "Privacy", href: "#" },
               { label: "Terms",   href: "#" },
               { label: "Docs",    href: "#" },
-              { label: "GitHub",  href: "#" },
             ].map(l => (
               <a key={l.label} href={l.href} className="text-xs text-black/25 hover:text-black/55 transition-colors tracking-widest">{l.label}</a>
             ))}
