@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { label: "Agents",       href: "#agents" },
   { label: "Workflow",     href: "#workflow" },
   { label: "Integrations", href: "#integrations" },
-  { label: "Pricing",      href: "#pricing" },
 ]
 
 const NAV_STYLE = {
