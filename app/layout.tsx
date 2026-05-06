@@ -11,21 +11,21 @@ const _courierPrime = Courier_Prime({ weight: ["400", "700"], subsets: ["latin"]
 const _ibmPlexSans = IBM_Plex_Sans({ weight: ["300", "400", "500", "600"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Agentic — Autonomous AI Agents at Scale',
-  description: 'Deploy autonomous AI agents that think, act, and execute across any workflow. Connect 200+ integrations, run agents in parallel, and ship faster with the Agentic platform.',
-  keywords: ['AI agents', 'autonomous agents', 'LLM orchestration', 'AI automation', 'multi-agent platform'],
-  authors: [{ name: 'Agentic' }],
+  title: 'Amakuru — Rwanda-first news, verified',
+  description: 'Amakuru is a Rwanda-first news platform combining source credibility scoring, community verification, journalist development, and audio-first summaries in Kinyarwanda, English, and French.',
+  keywords: ['Rwanda news', 'amakuru', 'news aggregation', 'fact checking', 'community verification', 'Kinyarwanda', 'data journalism', 'solutions journalism'],
+  authors: [{ name: 'Amakuru' }],
   openGraph: {
-    title: 'Agentic — Autonomous AI Agents at Scale',
-    description: 'Deploy autonomous AI agents that think, act, and execute across any workflow.',
+    title: 'Amakuru — Rwanda-first news, verified',
+    description: 'A Rwanda-first news platform combining credibility scoring, community verification, and multilingual audio summaries.',
     type: 'website',
-    url: 'https://agentic.ai',
-    siteName: 'Agentic',
+    url: 'https://amakuru.rw',
+    siteName: 'Amakuru',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Agentic — Autonomous AI Agents at Scale',
-    description: 'Deploy autonomous AI agents that think, act, and execute across any workflow.',
+    title: 'Amakuru — Rwanda-first news, verified',
+    description: 'Credibility scoring + community verification + multilingual audio summaries.',
   },
   icons: {
     icon: [

@@ -6,44 +6,44 @@ import { GitPullRequest, GitMerge, MessageSquare, CheckCircle2, Clock, AlertCirc
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const ALL_PRS = [
-  { id: 145, title: "feat: multi-agent orchestration v2",      agent: "orchestrator",    status: "review",  comments: 2,  additions: 57,  deletions: 4,  branch: "feat/orchestration-v2", time: "Just now" },
-  { id: 144, title: "fix: memory context window overflow",     agent: "analyst-agent",   status: "review",  comments: 1,  additions: 18,  deletions: 3,  branch: "fix/ctx-overflow",      time: "1m ago" },
-  { id: 143, title: "feat: streaming tool response",           agent: "monitor-agent",   status: "merged",  comments: 4,  additions: 93,  deletions: 11, branch: "feat/stream-tools",     time: "1m ago" },
-  { id: 142, title: "feat: add memory context to executor",    agent: "executor-agent",  status: "merged",  comments: 3,  additions: 84,  deletions: 12, branch: "feat/memory-ctx",       time: "2m ago" },
-  { id: 141, title: "fix: rate limit backoff strategy",        agent: "monitor-agent",   status: "approved",comments: 1,  additions: 31,  deletions: 8,  branch: "fix/rate-backoff",      time: "8m ago" },
-  { id: 140, title: "feat: parallel tool execution",           agent: "researcher-agent",status: "review",  comments: 5,  additions: 142, deletions: 27, branch: "feat/parallel-tools",   time: "22m ago" },
-  { id: 139, title: "refactor: orchestrator pipeline",         agent: "analyst-agent",   status: "merged",  comments: 7,  additions: 209, deletions: 88, branch: "refactor/pipeline",     time: "1h ago" },
+  { id: 145, title: "story: district road blockage update",        agent: "verifier",   status: "review",   comments: 2, additions: 57, deletions: 4,  branch: "tips/road-blockage",      time: "Just now" },
+  { id: 144, title: "update: source credibility methodology",      agent: "auditor",    status: "review",   comments: 1, additions: 18, deletions: 3,  branch: "scoring/methodology-v1",  time: "1m ago" },
+  { id: 143, title: "publish: audio summary (Kinyarwanda)",        agent: "producer",   status: "merged",   comments: 4, additions: 93, deletions: 11, branch: "audio/daily-brief",       time: "1m ago" },
+  { id: 142, title: "verify: power outage reports by sector",      agent: "monitor",    status: "merged",   comments: 3, additions: 84, deletions: 12, branch: "signals/power-outage",    time: "2m ago" },
+  { id: 141, title: "approve: correction + provenance trail",      agent: "editor",     status: "approved", comments: 1, additions: 31, deletions: 8,  branch: "corrections/provenance", time: "8m ago" },
+  { id: 140, title: "trend: what's trending in Kigali (today)",    agent: "curator",    status: "review",   comments: 5, additions: 142,deletions: 27, branch: "trends/kigali-today",     time: "22m ago" },
+  { id: 139, title: "data: cost-of-living index snapshot",         agent: "analyst",    status: "merged",   comments: 7, additions: 209,deletions: 88, branch: "data/cost-index",         time: "1h ago" },
 ]
 
 const ALL_REVIEW_FILES = [
-  { file: "agent/executor.ts",    pct: 72 },
-  { file: "lib/tools/index.ts",   pct: 45 },
-  { file: "core/planner.ts",      pct: 88 },
-  { file: "utils/retry.ts",       pct: 31 },
-  { file: "agent/memory.ts",      pct: 60 },
+  { file: "verification/tip.schema.ts", pct: 72 },
+  { file: "scoring/methodology.json",   pct: 45 },
+  { file: "signals/trending.ts",        pct: 88 },
+  { file: "audio/summarize.ts",         pct: 31 },
+  { file: "stories/provenance.ts",      pct: 60 },
 ]
 
 const ALL_REVIEW_LINES: { type: "comment"|"approve"|"change"|"code"; text: string; author?: string }[] = [
-  { type: "code",    text: 'const ctx = await memory.load(task.id)' },
-  { type: "comment", text: "Should we cache this per agent run?", author: "analyst-agent" },
-  { type: "code",    text: 'return researcher.execute(task, ctx)' },
-  { type: "approve", text: "LGTM — memory scope looks correct", author: "monitor-agent" },
-  { type: "code",    text: 'export const run = async (task) => {' },
-  { type: "change",  text: "Consider adding retry logic here", author: "executor-agent" },
-  { type: "code",    text: '  const plan = await planner.run(goal)' },
-  { type: "approve", text: "Approved — ship it", author: "orchestrator" },
-  { type: "code",    text: '  await ctx.memory.save(result)' },
-  { type: "comment", text: "Add error boundary here", author: "monitor-agent" },
-  { type: "code",    text: 'return { status: "done", result }' },
-  { type: "approve", text: "All checks pass", author: "analyst-agent" },
+  { type: "code",    text: 'const tier = verify.locationTier("district")' },
+  { type: "comment", text: "Add evidence requirement for high-impact claims", author: "auditor" },
+  { type: "code",    text: 'score.attachCitations(story.sources)' },
+  { type: "approve", text: "LGTM — scoring rationale is clear", author: "editor" },
+  { type: "code",    text: 'export const summarizeAudio = async (story) => {' },
+  { type: "change",  text: "Add Kinyarwanda-first fallback here", author: "translator" },
+  { type: "code",    text: '  return publishPodcast(brief)' },
+  { type: "approve", text: "Approved — publish it", author: "producer" },
+  { type: "code",    text: 'provenance.append({ change, timestamp })' },
+  { type: "comment", text: "Show what changed in the UI", author: "curator" },
+  { type: "code",    text: 'return { status: "verified", story }' },
+  { type: "approve", text: "All checks pass", author: "verifier" },
 ]
 
 const COMMITS = [
-  { hash: "a3f8c21", msg: "fix: memory leak in long-running agents",    time: "Just now" },
-  { hash: "b7d2e09", msg: "feat: streaming response for analyst",        time: "4m ago"   },
-  { hash: "c9a1f34", msg: "chore: bump @agentic/sdk to 2.4.1",          time: "12m ago"  },
-  { hash: "d4e6b78", msg: "perf: reduce token overhead by 18%",          time: "31m ago"  },
-  { hash: "e2c9d56", msg: "feat: add guardrails to executor-agent",      time: "1h ago"   },
+  { hash: "a3f8c21", msg: "feat: provenance trail for corrections", time: "Just now" },
+  { hash: "b7d2e09", msg: "feat: audio daily brief (rw/en/fr)",     time: "4m ago"   },
+  { hash: "c9a1f34", msg: "chore: update scoring methodology v1",   time: "12m ago"  },
+  { hash: "d4e6b78", msg: "perf: faster trending by time window",   time: "31m ago"  },
+  { hash: "e2c9d56", msg: "feat: expertise badges for commenters",  time: "1h ago"   },
 ]
 
 // Activity graph data — 7 cols x 5 rows like GitHub contributions
@@ -484,7 +484,7 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
           <span style={{
             position: "absolute", left: "50%", transform: "translateX(-50%)",
             fontSize: 10, letterSpacing: "0.18em", color: "rgba(0,0,0,0.28)", fontFamily: "monospace",
-          }}>agentic / platform — main</span>
+          }}>amakuru / coming-soon — main</span>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
             <LiveDot />
             <span style={{ fontSize: 8, color: "rgba(40,167,69,0.8)", letterSpacing: "0.16em", fontFamily: "monospace" }}>ALL SYSTEMS OPERATIONAL</span>
@@ -494,10 +494,10 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
         {/* Metrics strip — fixed height */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(0,0,0,0.06)", background: "rgba(251,250,247,0.9)" }}>
           {[
-            { label: "PRs Merged today",  val: 18,       icon: <GitMerge style={{ width: 11, height: 11 }} />,   graph: <MiniBarGraph seed={0} /> },
-            { label: "Reviews completed", val: 34,       icon: <Eye style={{ width: 11, height: 11 }} />,         graph: <MiniBarGraph seed={5} /> },
-            { label: "Agent commits",     val: 127,      icon: <GitCommit style={{ width: 11, height: 11 }} />,   graph: <MiniDotGraph seed={2} /> },
-            { label: "Tasks / min",       val: reqCount, icon: <Zap style={{ width: 11, height: 11 }} />,         graph: <LiveSparkline seed={7} /> },
+            { label: "Reports verified",     val: 18,       icon: <CheckCircle2 style={{ width: 11, height: 11 }} />, graph: <MiniBarGraph seed={0} /> },
+            { label: "Sources scored",       val: 34,       icon: <Eye style={{ width: 11, height: 11 }} />,          graph: <MiniBarGraph seed={5} /> },
+            { label: "Corrections tracked",  val: 127,      icon: <GitCommit style={{ width: 11, height: 11 }} />,    graph: <MiniDotGraph seed={2} /> },
+            { label: "Signals / min",        val: reqCount, icon: <Zap style={{ width: 11, height: 11 }} />,          graph: <LiveSparkline seed={7} /> },
           ].map((m, i) => (
             <div key={i} style={{ padding: "9px 12px", height: 82, overflow: "hidden", borderRight: i < 3 ? "1px solid rgba(0,0,0,0.06)" : "none", ...anim(60 + i * 45) }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
@@ -520,9 +520,9 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2px", flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <GitPullRequest style={{ width: 10, height: 10, color: "rgba(0,0,0,0.38)" }} />
-                <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>Pull Requests</span>
+              <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>Story Queue</span>
               </div>
-              <span style={{ fontSize: 7.5, color: "rgba(0,0,0,0.25)", fontFamily: "monospace" }}>{ALL_PRS.filter(p => p.status === "review").length} OPEN</span>
+            <span style={{ fontSize: 7.5, color: "rgba(0,0,0,0.25)", fontFamily: "monospace" }}>{ALL_PRS.filter(p => p.status === "review").length} NEEDS REVIEW</span>
             </div>
 
             {/* Fixed-height PR container — clips overflow, no layout shift */}
@@ -563,7 +563,7 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
             <div style={{ ...panel, padding: "8px 10px", flexShrink: 0, height: 76, overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 6 }}>
                 <Terminal style={{ width: 9, height: 9, color: "rgba(0,0,0,0.33)" }} />
-                <span style={{ fontSize: 7.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.33)", fontFamily: "monospace" }}>Commit Activity</span>
+                <span style={{ fontSize: 7.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.33)", fontFamily: "monospace" }}>Verification Activity</span>
               </div>
               <div style={{ display: "flex", gap: 2, flexWrap: "wrap", maxWidth: 210, height: 30, overflow: "hidden" }}>
                 {activity.map((a, i) => <HeatCell key={i} level={a.level} animDelay={i * 18 + 300} />)}
@@ -582,12 +582,12 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 5, height: "100%", overflow: "hidden", ...anim(210) }}>
             <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "0 2px", flexShrink: 0 }}>
               <Eye style={{ width: 10, height: 10, color: "rgba(0,0,0,0.38)" }} />
-              <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>Code Review — #{ALL_PRS[reviewFileIdx % ALL_PRS.length].id}</span>
+              <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>Verification Review — #{ALL_PRS[reviewFileIdx % ALL_PRS.length].id}</span>
             </div>
             <div style={{ ...panel, flex: 1, padding: "9px 10px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
               {/* Header — fixed */}
               <div style={{ marginBottom: 7, paddingBottom: 7, borderBottom: "1px solid rgba(0,0,0,0.05)", flexShrink: 0 }}>
-                <div style={{ fontSize: 9.5, fontWeight: 600, color: "#111", marginBottom: 2 }}>feat: parallel tool execution</div>
+                <div style={{ fontSize: 9.5, fontWeight: 600, color: "#111", marginBottom: 2 }}>verify: evidence + tiers for community tips</div>
                 <div style={{ display: "flex", gap: 5 }}>
                   <span style={{ fontSize: 7.5, color: "#28a745", fontFamily: "monospace" }}>+142</span>
                   <span style={{ fontSize: 7.5, color: "#d73a49", fontFamily: "monospace" }}>-27</span>
@@ -645,14 +645,14 @@ export function AgentInterface({ revealDelay = 0 }: { revealDelay?: number }) {
 
             <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "2px 2px 0", flexShrink: 0 }}>
               <Zap style={{ width: 10, height: 10, color: "rgba(0,0,0,0.38)" }} />
-              <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>CI / Agents</span>
+              <span style={{ fontSize: 8.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", fontFamily: "monospace" }}>Pipelines</span>
             </div>
             <div style={{ ...panel, flexShrink: 0, overflow: "hidden" }}>
               {[
-                { name: "researcher-agent", status: "passing", duration: "1m 32s" },
-                { name: "analyst-agent",    status: "running", duration: "0m 48s" },
-                { name: "executor-agent",   status: "passing", duration: "2m 11s" },
-                { name: "monitor-agent",    status: "running", duration: "0m 54s" },
+                { name: "curation",      status: "passing", duration: "1m 32s" },
+                { name: "verification",  status: "running", duration: "0m 48s" },
+                { name: "audio-brief",   status: "passing", duration: "2m 11s" },
+                { name: "trending",      status: "running", duration: "0m 54s" },
               ].map((a, i) => (
                 <div key={a.name} style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",

@@ -3,29 +3,29 @@
 import { useEffect, useState, useRef } from "react"
 
 const AGENT_NAMES = [
-  "analyst-7f2a", "executor-3b1c", "monitor-9d4e", "researcher-2c8f",
-  "planner-5a3d", "writer-1e9b", "auditor-4f2c", "coder-8d1a",
-  "reviewer-6b3e", "scheduler-0c7f",
+  "curator-7f2a", "verifier-3b1c", "monitor-9d4e", "researcher-2c8f",
+  "editor-5a3d", "writer-1e9b", "auditor-4f2c", "translator-8d1a",
+  "producer-6b3e", "dispatcher-0c7f",
 ]
 
 const TASKS = [
-  "Reviewing 14 open PRs on main branch",
-  "Summarizing weekly Slack threads",
-  "Generating Q2 financial report",
-  "Running integration test suite",
-  "Scraping competitor pricing data",
-  "Drafting 23 cold emails from CRM",
-  "Parsing inbound invoices → DB",
-  "Monitoring uptime across 8 regions",
-  "Refactoring auth module — 3 files",
-  "Analyzing user churn signals",
-  "Syncing Notion docs with Linear",
-  "Tagging 1,200 support tickets",
-  "Deploying to staging environment",
-  "Processing webhook payloads",
+  "Adding Rwanda context overlay to a regional story",
+  "Scoring a source with transparent methodology",
+  "Verifying a community report with evidence + location tier",
+  "Generating an audio summary in Kinyarwanda",
+  "Translating highlights to English and French",
+  "Detecting duplicate claims across outlets",
+  "Labeling what’s trending in Kigali right now",
+  "Checking power / internet outage reports by district",
+  "Updating crowd-sourced price index signals",
+  "Routing a verified tip to an emerging journalist",
+  "Drafting a short explainer with citations",
+  "Flagging missing provenance on a claim",
+  "Tracking corrections and what changed over time",
+  "Preparing a data-story request for community voting",
 ]
 
-const REGIONS = ["us-east", "eu-west", "ap-south", "us-west", "eu-central"]
+const REGIONS = ["kigali", "north", "south", "east", "west"]
 const STATUSES = [
   { label: "running",  color: "#4ade80" },
   { label: "running",  color: "#4ade80" },
@@ -128,7 +128,7 @@ export function LiveAgentFeed() {
         borderBottom: "1px solid rgba(0,0,0,0.06)",
         background: "rgba(0,0,0,0.03)",
       }}>
-        {["AGENT", "TASK", "REGION", "STATUS"].map(h => (
+        {["WORKER", "TASK", "AREA", "STATUS"].map(h => (
           <span key={h} style={{ fontSize: 8, letterSpacing: "0.16em", color: "rgba(0,0,0,0.30)", fontFamily: "monospace" }}>{h}</span>
         ))}
       </div>
