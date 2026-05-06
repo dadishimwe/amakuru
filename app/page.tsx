@@ -109,8 +109,9 @@ export default function AmakuruPage() {
       {/* ── STICKY NAV ────────────────────────────────────────────────────── */}
       <MobileNav />
 
+      <main id="main-content">
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative h-screen overflow-hidden" aria-label="Introduction">
 
         {/* Video background — zooms in once intro is done */}
         <video
@@ -119,6 +120,8 @@ export default function AmakuruPage() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
+          aria-hidden="true"
+          title="Background video — Amakuru coming soon"
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/agentic-hero-9yW3wnTNMfn2U6lsVhTTZSJFEvAoSj.mp4"
           style={{
             transform: videoReady ? "scale(1.05)" : "scale(0.85)",
@@ -599,7 +602,9 @@ export default function AmakuruPage() {
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
       <footer className="py-10 px-6 md:px-12 lg:px-20 border-t border-black/[0.06]">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <span className="font-pixel text-xs tracking-[0.25em] text-black/50">AMAKURU</span>
+          <a href="/" className="font-pixel text-xs tracking-[0.25em] text-black/50 hover:text-black/70 transition-colors">
+            AMAKURU
+          </a>
 
           {/* Nav sections */}
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -629,6 +634,7 @@ export default function AmakuruPage() {
           <span className="text-xs text-black/20">© 2026 Amakuru. All rights reserved.</span>
         </div>
       </footer>
+      </main>
     </div>
   )
 }
