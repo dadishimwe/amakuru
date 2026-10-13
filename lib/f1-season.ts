@@ -244,6 +244,14 @@ function wikiKey(title: string): string {
   return title.replace(/_/g, " ").trim().toLowerCase()
 }
 
+function wikiImage(original: string, thumb: string): string {
+  const raw = thumb || original
+  if (!raw) return ""
+  const path = raw.split("?")[0]
+  // Wikimedia only renders listed widths. 640 is rejected; 960 is accepted.
+  return /\/\d+px-/.test(path) ? path.replace(/\/\d+px-/, "/960px-") : path
+}
+
 async function wikiThumbnails(titles: string[]): Promise<Map<string, string>> {
   const unique = new Map<string, string>()
   for (const title of titles) {
@@ -267,9 +275,7 @@ async function wikiThumbnails(titles: string[]): Promise<Map<string, string>> {
         })
         if (!response.ok) continue
         const body = (await response.json()) as { thumbnail?: { source?: string }; originalimage?: { source?: string } }
-        const original = body.originalimage?.source || ""
-        const thumb = body.thumbnail?.source || ""
-        const source = original.endsWith(".svg") ? original : thumb.replace(/\/\d+px-/, "/640px-") || original
+        const source = wikiImage(body.originalimage?.source || "", body.thumbnail?.source || "")
         if (source) images.set(key, source)
       } catch {
         continue
