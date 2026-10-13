@@ -4,6 +4,7 @@ import { Crest, Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
 import { formatPoints, getF1SeasonData, teamResults } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
+import { teamAccent } from "@/lib/team-colors"
 import { SITE_URL } from "@/lib/site"
 
 export const revalidate = 21600
@@ -42,6 +43,8 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
       title={team.name}
       dek={`Championship P${team.position || "—"} · ${formatPoints(team.points)} points · ${team.wins} wins.`}
       heroImage="/images/rwanda-racing-hero.webp"
+      accent={teamAccent(team.id)}
+      mark={team.position ? `P${team.position}` : ""}
       crumbs={[{ label: "Home", href: "/" }, { label: "Teams", href: "/season/teams" }, { label: team.name }]}
       jsonLd={[
         breadcrumbJsonLd([

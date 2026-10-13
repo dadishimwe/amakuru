@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import { SeasonSubnav } from "@/components/season/season-subnav"
 import { SiteFooter, SiteNavigation } from "@/components/site-chrome"
 import { formatUpdateTime } from "@/lib/f1-season"
@@ -14,6 +14,8 @@ export function SeasonFrame({
   jsonLd,
   heroImage,
   heroAlt,
+  accent,
+  mark,
   children,
 }: {
   current: string
@@ -26,6 +28,8 @@ export function SeasonFrame({
   jsonLd: unknown
   heroImage?: string
   heroAlt?: string
+  accent?: string
+  mark?: string
   children: ReactNode
 }) {
   return (
@@ -37,7 +41,11 @@ export function SeasonFrame({
       <SiteNavigation />
       <SeasonSubnav current={current} />
 
-      <main className="feature-page" id="main-content">
+      <main
+        className={`feature-page season-page${accent ? " season-page-accent" : ""}`}
+        id="main-content"
+        style={accent ? { "--team-accent": accent } as CSSProperties : undefined}
+      >
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           {crumbs.map((crumb, index) => (
             <span key={`${crumb.label}-${index}`} className="breadcrumb-item">
@@ -56,6 +64,7 @@ export function SeasonFrame({
           <p className="label label-acid subpage-label">{kicker}</p>
           <h1>{title}</h1>
           <p className="subpage-dek">{dek}</p>
+          {mark ? <span className="season-watermark" aria-hidden="true">{mark}</span> : null}
           <div className="season-meta-line">
             <span>DATA REFRESHES EVERY SIX HOURS</span>
             <span>UPDATED {formatUpdateTime(updatedAt)}</span>

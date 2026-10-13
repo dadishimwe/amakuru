@@ -4,6 +4,7 @@ import { Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
 import { driverResults, formatPoints, getF1SeasonData } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
+import { teamAccent } from "@/lib/team-colors"
 import { SITE_URL } from "@/lib/site"
 
 export const revalidate = 21600
@@ -49,6 +50,8 @@ export default async function DriverPage({ params }: { params: Promise<{ driverI
       ]}
       heroImage={driver.image}
       heroAlt=""
+      accent={teamAccent(driver.teamId)}
+      mark={driver.number || driver.code}
       jsonLd={[
         breadcrumbJsonLd([
           { name: "Home", path: "/" },
