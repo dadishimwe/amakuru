@@ -516,7 +516,7 @@ button { font: inherit; }
 .standings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .standings-card { min-width: 0; padding: 22px; border: 1px solid var(--line); background: #fbfaf3; }
 .standings-card-head { margin-bottom: 14px; display: flex; align-items: baseline; justify-content: space-between; }
-.standings-card-head h3 { margin: 0; font: 400 27px/1 Georgia, 'Times New Roman', serif; }
+.standings-card-head h2, .standings-card-head h3 { margin: 0; font: 400 27px/1 Georgia, 'Times New Roman', serif; }
 .standings-card-head span { color: #7c847c; font: 500 8px/1 'Geist Mono', monospace; letter-spacing: .12em; }
 .standings-scroll { overflow-x: auto; }
 .standings-table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -543,6 +543,50 @@ button { font: inherit; }
 }
 .season-attribution p { max-width: 900px; margin: 11px 0 0; color: #737a73; font-size: 10px; line-height: 1.7; }
 .season-attribution a { color: var(--rwanda-green); text-decoration: underline; text-underline-offset: 2px; }
+.breadcrumb-item { display: inline-flex; align-items: center; gap: 11px; }
+.season-subnav {
+  display: flex; overflow-x: auto; background: var(--paper); border-bottom: 1px solid var(--line);
+}
+.season-subnav a {
+  flex: 0 0 auto; padding: 16px 22px; color: #667066; border-bottom: 2px solid transparent;
+  font: 600 10px/1 'Geist Mono', monospace; letter-spacing: .14em; text-transform: uppercase;
+}
+.season-subnav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--acid); }
+.season-toolbar { margin: 0 0 18px; display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.season-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.season-chips button, .season-search input, .season-search select {
+  min-height: 40px; border: 1px solid var(--line); background: #fbfaf3; color: var(--ink);
+}
+.season-chips button { padding: 0 12px; font: 600 9px/1 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.season-chips button[aria-pressed="true"] { color: var(--ink); background: var(--acid); border-color: var(--acid); }
+.season-search { display: grid; gap: 6px; min-width: min(100%, 240px); }
+.season-search-wide { max-width: 420px; margin-bottom: 18px; }
+.season-search span { color: #7d847c; font: 600 8px/1 'Geist Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+.season-search input, .season-search select { width: 100%; padding: 0 12px; font-size: 13px; }
+.season-support { margin: -12px 0 18px; color: #777f77; font-size: 12px; }
+.calendar-meta { display: grid; justify-items: end; gap: 4px; }
+.calendar-meta time { color: var(--ink); font: 500 10px/1.5 'Geist Mono', monospace; }
+.calendar-meta time span, .calendar-meta small { color: var(--rwanda-green); font: 500 8px/1.4 'Geist Mono', monospace; letter-spacing: .06em; text-transform: uppercase; }
+.calendar-race-name a, .standings-name a, .standings-team a, .latest-result-card h2 a, .podium-list a { color: inherit; }
+.calendar-race-name a:hover, .standings-name a:hover, .standings-team a:hover, .latest-result-card h2 a:hover, .podium-list a:hover, .directory-card h2 a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.standings-name small { margin-left: 6px; color: #8a918a; font: 600 8px/1 'Geist Mono', monospace; }
+.results-table { min-width: 760px; }
+.directory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.directory-card {
+  min-height: 168px; padding: 18px; display: flex; flex-direction: column; gap: 8px;
+  border: 1px solid var(--line); background: #fbfaf3;
+}
+.directory-card h2 { margin: 0; font: 400 28px/1.05 Georgia, 'Times New Roman', serif; letter-spacing: -.03em; }
+.directory-card p { margin: 0; color: #747c74; font-size: 12px; }
+.directory-card > div { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; }
+.directory-card strong { font: 600 12px/1 'Geist Mono', monospace; }
+.directory-kicker { color: var(--rwanda-green); font: 600 8px/1 'Geist Mono', monospace; letter-spacing: .12em; }
+.official-link { color: var(--rwanda-green) !important; font: 600 10px/1.4 'Geist Mono', monospace; letter-spacing: .04em; }
+.profile-facts { margin-bottom: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+.profile-facts > * { padding: 8px 10px; border: 1px solid var(--line); background: #fbfaf3; font-size: 12px; }
+.profile-facts a:hover { text-decoration: underline; }
+.season-jump-links { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.article-next .season-jump-links a { color: var(--acid); font: 600 10px/1.4 'Geist Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
 .site-footer a:focus-visible, .site-footer button:focus-visible, .primary-nav a:focus-visible, .menu-toggle:focus-visible, .article-content a:focus-visible, .breadcrumbs a:focus-visible {
   outline: 2px solid var(--rwanda-blue);
   outline-offset: 4px;
@@ -573,7 +617,9 @@ button { font: inherit; }
   .season-section { margin-top: 57px; }
   .season-section-title { font-size: 43px; }
   .calendar-row { grid-template-columns: 35px minmax(0, 1fr); gap: 10px; }
-  .calendar-time { grid-column: 2; text-align: left; }
+  .calendar-time, .calendar-meta { grid-column: 2; justify-items: start; text-align: left; }
+  .season-subnav a { padding: 14px 16px; font-size: 9px; }
+  .standings-card-head h2 { font-size: 24px; }
   .standings-card { padding: 17px 14px; }
   .standings-table td { padding: 9px 4px; }
   .season-attribution { margin-top: 44px; padding: 18px 0; }

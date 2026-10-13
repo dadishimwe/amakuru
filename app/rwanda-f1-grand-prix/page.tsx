@@ -158,6 +158,13 @@ export default function RwandaF1GrandPrixPage() {
             <h2>Follow the championship on the way to Rwanda.</h2>
             <p>See the current F1 calendar, recent results and championship standings, with race times shown for Kigali.</p>
             <a className="button button-acid" href="/season">Open the season hub <ArrowUpRight /></a>
+            <div className="season-jump-links">
+              <a href="/season">Schedule</a>
+              <a href="/season/results">Results</a>
+              <a href="/season/standings">Standings</a>
+              <a href="/season/drivers">Drivers</a>
+              <a href="/season/teams">Teams</a>
+            </div>
           </section>
 
           <p className="article-source-note">

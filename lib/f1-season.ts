@@ -1,5 +1,39 @@
+import { officialTeamSite } from "@/lib/f1-official-sites"
+
 const JOLPICA_BASE = "https://api.jolpi.ca/ergast/f1"
 export const JOLPICA_REFRESH_SECONDS = 6 * 60 * 60
+
+export type SessionStamp = { date?: string; time?: string }
+
+export type F1Driver = {
+  driverId?: string
+  permanentNumber?: string
+  code?: string
+  url?: string
+  givenName?: string
+  familyName?: string
+  dateOfBirth?: string
+  nationality?: string
+}
+
+export type F1Constructor = {
+  constructorId?: string
+  url?: string
+  name?: string
+  nationality?: string
+}
+
+export type F1Result = {
+  number?: string
+  position?: string
+  points?: string
+  status?: string
+  grid?: string
+  laps?: string
+  Driver?: F1Driver
+  Constructor?: F1Constructor
+  Time?: { time?: string }
+}
 
 export type F1Race = {
   season?: string
@@ -9,74 +43,142 @@ export type F1Race = {
   time?: string
   url?: string
   Circuit?: {
+    circuitId?: string
     circuitName?: string
-    Location?: {
-      locality?: string
-      country?: string
-    }
+    url?: string
+    Location?: { locality?: string; country?: string }
   }
-  Results?: Array<{
-    position?: string
-    points?: string
-    status?: string
-    Driver?: {
-      givenName?: string
-      familyName?: string
-    }
-    Constructor?: {
-      name?: string
-    }
-    Time?: {
-      time?: string
-    }
-  }>
+  Qualifying?: SessionStamp
+  Sprint?: SessionStamp
+  Results?: F1Result[]
 }
 
 export type DriverStanding = {
   position?: string
   points?: string
   wins?: string
-  Driver?: {
-    givenName?: string
-    familyName?: string
-    code?: string
-  }
-  Constructors?: Array<{
-    name?: string
-  }>
+  Driver?: F1Driver
+  Constructors?: F1Constructor[]
 }
 
 export type ConstructorStanding = {
   position?: string
   points?: string
   wins?: string
-  Constructor?: {
-    name?: string
-  }
+  Constructor?: F1Constructor
+}
+
+export type ClassifiedResult = {
+  position: string
+  number: string
+  driverId: string
+  driver: string
+  code: string
+  teamId: string
+  team: string
+  grid: string
+  laps: string
+  time: string
+  points: string
+  status: string
+}
+
+export type ClassifiedRace = {
+  round: string
+  name: string
+  place: string
+  circuit: string
+  when: string
+  results: ClassifiedResult[]
+}
+
+export type GridDriver = {
+  id: string
+  name: string
+  code: string
+  number: string
+  nationality: string
+  dateOfBirth: string
+  wikipedia: string
+  team: string
+  teamId: string
+  points: string
+  position: string
+  wins: string
+}
+
+export type GridTeam = {
+  id: string
+  name: string
+  nationality: string
+  wikipedia: string
+  officialUrl: string
+  officialLabel: string
+  points: string
+  position: string
+  wins: string
+  drivers: Array<{ id: string; name: string; code: string; number: string }>
 }
 
 type JolpicaPayload = {
   MRData?: {
-    RaceTable?: {
-      season?: string
-      Races?: F1Race[]
-    }
+    total?: string
+    limit?: string
+    RaceTable?: { season?: string; Races?: F1Race[] }
     StandingsTable?: {
       StandingsLists?: Array<{
         DriverStandings?: DriverStanding[]
         ConstructorStandings?: ConstructorStanding[]
       }>
     }
+    DriverTable?: { Drivers?: F1Driver[] }
+    ConstructorTable?: { Constructors?: F1Constructor[] }
   }
 }
 
 export type F1SeasonData = {
   season: string
   races: F1Race[]
+  classifiedRaces: ClassifiedRace[]
   driverStandings: DriverStanding[]
   constructorStandings: ConstructorStanding[]
+  gridDrivers: GridDriver[]
+  gridTeams: GridTeam[]
   latestRace: F1Race | null
   updatedAt: string
+}
+
+async function getAllSeasonResults(): Promise<F1Race[]> {
+  const first = await getJolpica("current/results.json?limit=100&offset=0")
+  const total = Number(first?.MRData?.total ?? 0)
+  const limit = Number(first?.MRData?.limit ?? 100) || 100
+  const pages = [first]
+  if (total > limit) {
+    const rest = []
+    for (let offset = limit; offset < total; offset += limit) {
+      rest.push(getJolpica(`current/results.json?limit=${limit}&offset=${offset}`))
+    }
+    pages.push(...await Promise.all(rest))
+  }
+
+  const byRound = new Map<string, F1Race>()
+  for (const page of pages) {
+    for (const race of page?.MRData?.RaceTable?.Races ?? []) {
+      const key = race.round || race.raceName || ""
+      const existing = byRound.get(key)
+      if (!existing) {
+        byRound.set(key, { ...race, Results: [...(race.Results ?? [])] })
+        continue
+      }
+      existing.Results = [...(existing.Results ?? []), ...(race.Results ?? [])]
+    }
+  }
+  return Array.from(byRound.values())
+    .map((race) => ({
+      ...race,
+      Results: [...(race.Results ?? [])].sort((a, b) => Number(a.position) - Number(b.position)),
+    }))
+    .sort((a, b) => Number(a.round) - Number(b.round))
 }
 
 async function getJolpica(path: string): Promise<JolpicaPayload | null> {
@@ -92,26 +194,125 @@ async function getJolpica(path: string): Promise<JolpicaPayload | null> {
   }
 }
 
+export function personName(driver?: F1Driver): string {
+  return [driver?.givenName, driver?.familyName].filter(Boolean).join(" ")
+}
+
+export function placeName(race: F1Race): string {
+  const parts = [race.Circuit?.Location?.locality, race.Circuit?.Location?.country].filter(Boolean)
+  return parts.join(", ") || race.Circuit?.circuitName || "Circuit details to follow"
+}
+
+function classifiedResult(result: F1Result, index: number): ClassifiedResult {
+  return {
+    position: result.position || String(index + 1),
+    number: result.number || result.Driver?.permanentNumber || "—",
+    driverId: result.Driver?.driverId || "",
+    driver: personName(result.Driver) || "Driver",
+    code: result.Driver?.code || "",
+    teamId: result.Constructor?.constructorId || "",
+    team: result.Constructor?.name || "Team",
+    grid: result.grid || "—",
+    laps: result.laps || "—",
+    time: result.Time?.time || result.status || "—",
+    points: result.points || "0",
+    status: result.status || "",
+  }
+}
+
 export async function getF1SeasonData(): Promise<F1SeasonData> {
-  const [schedule, drivers, constructors, latest] = await Promise.all([
+  const [schedule, driverCatalog, constructorCatalog, drivers, constructors, resultRaces] = await Promise.all([
     getJolpica("current.json?limit=100"),
-    getJolpica("current/driverStandings.json?limit=22"),
-    getJolpica("current/constructorStandings.json?limit=11"),
-    getJolpica("current/last/results.json?limit=5"),
+    getJolpica("current/drivers.json?limit=100"),
+    getJolpica("current/constructors.json?limit=30"),
+    getJolpica("current/driverStandings.json?limit=40"),
+    getJolpica("current/constructorStandings.json?limit=20"),
+    getAllSeasonResults(),
   ])
 
-  const scheduleTable = schedule?.MRData?.RaceTable
+  const scheduleRaces = schedule?.MRData?.RaceTable?.Races ?? []
   const driverRows = drivers?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings ?? []
-  const constructorRows =
-    constructors?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings ?? []
-  const latestRace = latest?.MRData?.RaceTable?.Races?.[0] ?? null
+  const constructorRows = constructors?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings ?? []
+  const completedRaces = resultRaces.filter((race) => (race.Results?.length ?? 0) > 0)
+  const catalog = new Map(
+    (driverCatalog?.MRData?.DriverTable?.Drivers ?? [])
+      .filter((driver) => driver.driverId)
+      .map((driver) => [driver.driverId as string, driver]),
+  )
+  const teams = constructorCatalog?.MRData?.ConstructorTable?.Constructors ?? []
+
+  const classifiedRaces: ClassifiedRace[] = completedRaces.map((race) => ({
+    round: race.round || "",
+    name: race.raceName || "Grand Prix",
+    place: placeName(race),
+    circuit: race.Circuit?.circuitName || "",
+    when: formatKigaliDateTime(race),
+    results: (race.Results ?? []).map(classifiedResult),
+  }))
+
+  const gridDrivers: GridDriver[] = driverRows.flatMap((row) => {
+    const id = row.Driver?.driverId
+    if (!id) return []
+    const profile = catalog.get(id)
+    const team = row.Constructors?.[0]
+    return [{
+      id,
+      name: personName(row.Driver) || personName(profile) || "Driver",
+      code: row.Driver?.code || profile?.code || "",
+      number: row.Driver?.permanentNumber || profile?.permanentNumber || "",
+      nationality: profile?.nationality || row.Driver?.nationality || "",
+      dateOfBirth: profile?.dateOfBirth || row.Driver?.dateOfBirth || "",
+      wikipedia: profile?.url || row.Driver?.url || "",
+      team: team?.name || "",
+      teamId: team?.constructorId || "",
+      points: row.points || "0",
+      position: row.position || "",
+      wins: row.wins || "0",
+    }]
+  })
+
+  const driversByTeam = new Map<string, GridTeam["drivers"]>()
+  for (const driver of gridDrivers) {
+    if (!driver.teamId) continue
+    const list = driversByTeam.get(driver.teamId) ?? []
+    list.push({ id: driver.id, name: driver.name, code: driver.code, number: driver.number })
+    driversByTeam.set(driver.teamId, list)
+  }
+
+  const standingByTeam = new Map(
+    constructorRows
+      .filter((row) => row.Constructor?.constructorId)
+      .map((row) => [row.Constructor?.constructorId as string, row]),
+  )
+
+  const gridTeams: GridTeam[] = (constructorRows.length ? constructorRows.map((row) => row.Constructor) : teams)
+    .filter((team): team is F1Constructor => Boolean(team?.constructorId))
+    .map((team) => {
+      const standing = standingByTeam.get(team.constructorId as string)
+      const official = officialTeamSite(team.constructorId)
+      return {
+        id: team.constructorId as string,
+        name: team.name || standing?.Constructor?.name || "Team",
+        nationality: team.nationality || standing?.Constructor?.nationality || "",
+        wikipedia: team.url || standing?.Constructor?.url || "",
+        officialUrl: official?.href || "",
+        officialLabel: official?.label || team.name || "Official website",
+        points: standing?.points || "0",
+        position: standing?.position || "",
+        wins: standing?.wins || "0",
+        drivers: driversByTeam.get(team.constructorId as string) ?? [],
+      }
+    })
 
   return {
-    season: scheduleTable?.season ?? String(new Date().getUTCFullYear()),
-    races: scheduleTable?.Races ?? [],
+    season: schedule?.MRData?.RaceTable?.season ?? String(new Date().getUTCFullYear()),
+    races: scheduleRaces,
+    classifiedRaces,
     driverStandings: driverRows,
     constructorStandings: constructorRows,
-    latestRace,
+    gridDrivers,
+    gridTeams,
+    latestRace: completedRaces.at(-1) ?? null,
     updatedAt: new Date().toISOString(),
   }
 }
@@ -123,7 +324,7 @@ export function raceStartTimestamp(race: F1Race): number {
   return Number.isNaN(parsed) ? Number.POSITIVE_INFINITY : parsed
 }
 
-export function formatKigaliDateTime(race: F1Race): string {
+export function formatKigaliDateTime(race: Pick<F1Race, "date" | "time">): string {
   if (!race.date) return "Time to be confirmed"
   const start = race.time ? `${race.date}T${race.time}` : `${race.date}T12:00:00Z`
   const date = new Date(start)
@@ -142,4 +343,23 @@ export function formatUpdateTime(value: string): string {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value))
+}
+
+export function formatPoints(value?: string): string {
+  const points = Number(value)
+  return Number.isFinite(points) ? points.toLocaleString("en-RW", { maximumFractionDigits: 1 }) : "—"
+}
+
+export function driverResults(data: F1SeasonData, driverId: string) {
+  return data.classifiedRaces.flatMap((race) => {
+    const result = race.results.find((row) => row.driverId === driverId)
+    return result ? [{ race, result }] : []
+  })
+}
+
+export function teamResults(data: F1SeasonData, teamId: string) {
+  return data.classifiedRaces.flatMap((race) => {
+    const results = race.results.filter((row) => row.teamId === teamId)
+    return results.length ? [{ race, results }] : []
+  })
 }
