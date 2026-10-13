@@ -1,17 +1,10 @@
-"use client"
-
-import { useState } from "react"
+import { BrandMark, SiteFooter, SiteNavigation } from "@/components/site-chrome"
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site"
 
 const FIA_ANNOUNCEMENT =
   "https://api.fia.com/news/formula-1-returns-africa-10-year-agreement-race-rwanda"
 const FIA_KIGALI_AWARDS =
   "https://api.fia.com/news/landmark-fia-awards-see-2024-fia-champions-crowned-rwanda"
-
-const navItems = [
-  { label: "The announcement", href: "#the-deal" },
-  { label: "Rwanda's moment", href: "#rwanda" },
-  { label: "What comes next", href: "#next" },
-]
 
 function ArrowUpRight({ className = "" }: { className?: string }) {
   return (
@@ -28,18 +21,18 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
   )
 }
 
-function BrandMark() {
-  return (
-    <span className="brand-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </span>
-  )
-}
-
 export default function AmakuruPage() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const homePageData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${SITE_URL}/#webpage`,
+    url: `${SITE_URL}/`,
+    name: `${SITE_NAME} — Formula 1, through a Rwanda lens`,
+    description: SITE_DESCRIPTION,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+    inLanguage: "en",
+  }
 
   return (
     <div className="site-shell">
@@ -54,41 +47,7 @@ export default function AmakuruPage() {
         </span>
       </div>
 
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Amakuru Motorsport home">
-          <BrandMark />
-          <span className="brand-word">AMAKURU</span>
-          <span className="brand-divider" />
-          <span className="brand-section">MOTORSPORT</span>
-        </a>
-
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={menuOpen}
-          aria-controls="primary-navigation"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span />
-          <span />
-        </button>
-
-        <nav
-          className={`primary-nav${menuOpen ? " is-open" : ""}`}
-          id="primary-navigation"
-          aria-label="Primary navigation"
-        >
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
-              {item.label}
-            </a>
-          ))}
-          <a className="nav-cta" href="#latest" onClick={() => setMenuOpen(false)}>
-            Latest story <ArrowUpRight />
-          </a>
-        </nav>
-      </header>
+      <SiteNavigation />
 
       <main id="main-content">
         <section className="hero" id="top" aria-labelledby="hero-title">
@@ -299,32 +258,11 @@ export default function AmakuruPage() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <a className="brand brand-footer" href="#top" aria-label="Amakuru Motorsport home">
-          <BrandMark />
-          <span className="brand-word">AMAKURU</span>
-          <span className="brand-divider" />
-          <span className="brand-section">MOTORSPORT</span>
-        </a>
-        <p>Formula 1, through a Rwanda lens.</p>
-        <div className="footer-links">
-          <a href="#the-deal">The announcement</a>
-          <a href="#rwanda">Rwanda's moment</a>
-          <a href="#next">The road ahead</a>
-          <a href={FIA_ANNOUNCEMENT} target="_blank" rel="noreferrer">FIA source <ArrowUpRight /></a>
-          <button
-            className="footer-privacy"
-            type="button"
-            onClick={() => window.dispatchEvent(new Event("amakuru:open-privacy-settings"))}
-          >
-            Privacy choices
-          </button>
-        </div>
-        <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Amakuru Motorsport</span>
-          <span>INDEPENDENT EDITORIAL · DADI ISHIMWE · KIGALI, RWANDA</span>
-        </div>
-      </footer>
+      <SiteFooter />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageData).replace(/</g, "\\u003c") }}
+      />
     </div>
   )
 }
