@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Crest, Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
+import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { formatPoints, getF1SeasonData, teamResults } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
 import { teamAccent } from "@/lib/team-colors"
@@ -30,6 +31,22 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
   const { constructorId } = await params
   const data = await getF1SeasonData()
   const team = data.gridTeams.find((item) => item.id === constructorId)
+  if (!team && data.unavailable) {
+    return (
+      <SeasonFrame
+        current="/season/teams"
+        year={data.season}
+        updatedAt={data.updatedAt}
+        kicker="CONSTRUCTOR"
+        title="This team page is waiting on the feed."
+        dek="The championship source is unavailable, so this profile is not being filled with a placeholder."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Teams", href: "/season/teams" }, { label: "Team" }]}
+        jsonLd={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Teams", path: "/season/teams" }])}
+      >
+        <SeasonUnavailable />
+      </SeasonFrame>
+    )
+  }
   if (!team) notFound()
   const results = teamResults(data, team.id)
   const path = `/season/teams/${team.id}`

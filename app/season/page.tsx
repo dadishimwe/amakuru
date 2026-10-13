@@ -1,4 +1,5 @@
 import { Crest, Portrait } from "@/components/season/season-media"
+import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { ScheduleExplorer } from "@/components/season/schedule-explorer"
 import { SeasonFrame } from "@/components/season/season-frame"
 import {
@@ -63,6 +64,7 @@ export default async function SeasonPage() {
         },
       ]}
     >
+      {data.unavailable ? <SeasonUnavailable /> : <>
       <section className="season-feature-grid" aria-label="Next race and latest result">
         <article className={`next-race-card${nextRace?.image ? " next-race-card-photo" : ""}`}>
           {nextRace?.image ? <img className="card-photo" src={nextRace.image} alt="" /> : null}
@@ -119,6 +121,7 @@ export default async function SeasonPage() {
         </article>
       </section>
       <ScheduleExplorer rows={rows} />
+      </>}
     </SeasonFrame>
   )
 }

@@ -6,7 +6,7 @@ The approved homepage remains the front door. The product now adds useful destin
 
 ### Season Hub
 
-The **Season** destination brings together the next Grand Prix, upcoming rounds, the latest classified result, and the top ten driver and constructor standings. Race times are shown in Kigali time. Data is cached for six hours, the page degrades gracefully if the provider is unavailable, and the source/license note is visible beside the data.
+The **Season** destination brings together the next Grand Prix, the full calendar, the latest podium, and separate pages for classified results, the full driver and constructor standings, every driver, and every team. Race times are shown in Kigali time. Data is cached for six hours. If the provider is unavailable, those pages say so instead of inventing a table, and the source/license note stays visible beside the data.
 
 The owner confirmed Amakuru will remain **personal and non-commercial** for this phase. The hub uses the Jolpica-F1 Ergast-compatible API under its non-commercial terms; data is licensed CC BY-NC-SA 4.0. The API asks clients to cache data and limits unauthenticated use to four requests per second and 500 per hour. See [Jolpica API docs](https://api.jolpi.ca/docs/), [terms](https://github.com/jolpica/jolpica-f1/blob/main/TERMS.md), and [rate limits](https://github.com/jolpica/jolpica-f1/blob/main/docs/rate_limits.md).
 
@@ -18,15 +18,15 @@ The static **Rwanda F1 Grand Prix** guide separates confirmed FIA details from u
 
 ### Consent-based Google Analytics
 
-Google Analytics remains **off until a visitor explicitly opts in**. After acceptance, Amakuru sends page views as the visitor moves between pages and retains standard campaign parameters and a sanitized referrer for acquisition context. Preview builds stay outside the production property. Vercel Analytics remains separate and is described in the privacy notice.
+On the live hosts `amakuru.rw` and `www.amakuru.rw`, the first visit is counted as soon as someone arrives. Schedule, results, standings, drivers, teams, and each profile keep sending a page view even if the visitor chooses No thanks. Allowing Google Analytics covers the other pages after that. The popup stays in place for that choice. Campaign parameters and a sanitized referrer are kept for acquisition context. Preview builds stay outside the production property. Vercel Analytics remains separate and is described in the privacy notice.
 
-Google's Realtime report is the place to check whether a newly opted-in visit and its page views are arriving. Use the active-user, page-view, and Events cards for immediate checks; standard acquisition reports can take longer to populate. Google's [Realtime report guidance](https://support.google.com/analytics/answer/9271392?hl=en) describes the report's current activity window and available details.
+Google's Realtime report is the place to check whether an arrival and its championship page views are coming in. Use the active-user, page-view, and Events cards for immediate checks; standard acquisition reports can take longer to populate. Google's [Realtime report guidance](https://support.google.com/analytics/answer/9271392?hl=en) describes the report's current activity window and available details.
 
-## Good next steps
+## Delivered after the season hub
 
-- Add a small **Road to Rwanda** story desk with original, sourced explainers. Label official announcements, reporting, and open questions clearly.
-- Publish evergreen guides such as “How a Grand Prix weekend works,” “What is an undercut?” and “How championship points work.”
-- Add a race-weekend explainer only if the data feed and its license support the intended use. Avoid live telemetry on the free setup.
+- **Road to Rwanda** (`/road-to-rwanda`) is a short desk with three labeled notes: the FIA announcement, reporting on the 2024 FIA Awards in Kigali, and the open questions that still have no date. The homepage links to each label.
+- Evergreen guides live at `/guides`: how a Grand Prix weekend works, what an undercut is, and how championship points work. They are static pages. They do not call the race feed.
+- Live telemetry stays out. A weekend guide describes the shape of a round and points readers at the cached Kigali schedule.
 
 ## What to defer
 
@@ -39,7 +39,7 @@ Google's Realtime report is the place to check whether a newly opted-in visit an
 
 Vercel describes Hobby as a free plan for personal, non-commercial use. It includes usage allowances for analytics and function invocations, and some limit excesses can pause projects. Before adding sponsorships, ads, paid products, or a business purpose, review whether Hobby remains appropriate. [Vercel Hobby plan](https://vercel.com/docs/plans/hobby) · [Vercel terms](https://vercel.com/legal/terms)
 
-Avoid a database until readers need accounts, saved teams, or leagues. Prefer static article pages and cached data requests. Keep all analytics opt-in, keep Easter eggs local and silent, and never make them gate content or collect personal details.
+Avoid a database until readers need accounts, saved teams, or leagues. Prefer static article pages and cached data requests. Count the arrival and the championship pages on the live site, and keep Allow as the switch for the other pages. Keep Easter eggs local and silent, and never make them gate content or collect personal details.
 
 ## Easter eggs that stay out of the way
 

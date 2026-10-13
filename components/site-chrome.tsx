@@ -110,6 +110,8 @@ export function SiteFooter() {
         <a href={sectionHref("#rwanda")}>Rwanda's moment</a>
         <a href={sectionHref("#next")}>The road ahead</a>
         <a href="/rwanda-f1-grand-prix">Rwanda F1 guide</a>
+        <a href="/road-to-rwanda">Road to Rwanda</a>
+        <a href="/guides">Guides</a>
         <a href="/season">Schedule</a>
         <a href="/season/results">Results</a>
         <a href="/season/standings">Standings</a>

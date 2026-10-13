@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
+import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { driverResults, formatPoints, getF1SeasonData } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
 import { teamAccent } from "@/lib/team-colors"
@@ -31,6 +32,22 @@ export default async function DriverPage({ params }: { params: Promise<{ driverI
   const { driverId } = await params
   const data = await getF1SeasonData()
   const driver = data.gridDrivers.find((item) => item.id === driverId)
+  if (!driver && data.unavailable) {
+    return (
+      <SeasonFrame
+        current="/season/drivers"
+        year={data.season}
+        updatedAt={data.updatedAt}
+        kicker="DRIVER"
+        title="This driver page is waiting on the feed."
+        dek="The championship source is unavailable, so this profile is not being filled with a placeholder."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Drivers", href: "/season/drivers" }, { label: "Driver" }]}
+        jsonLd={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Drivers", path: "/season/drivers" }])}
+      >
+        <SeasonUnavailable />
+      </SeasonFrame>
+    )
+  }
   if (!driver) notFound()
   const results = driverResults(data, driver.id)
   const path = `/season/drivers/${driver.id}`

@@ -219,9 +219,48 @@ export default async function AmakuruPage() {
           </div>
         </section>
 
-        <section className="section next-section" id="next" aria-labelledby="next-title">
+        <section className="section desk-section" id="road-to-rwanda" aria-labelledby="desk-title">
           <div className="section-kicker">
             <span>03</span>
+            <span>ROAD TO RWANDA</span>
+            <span className="kicker-line" />
+            <span>LABELED NOTES</span>
+          </div>
+          <div className="next-heading-grid">
+            <h2 id="desk-title">The story,<br /><em>sorted.</em></h2>
+            <p>
+              An official announcement, a report from Kigali, and the questions that still have no date. Each one is labeled so a rumour cannot sit next to a fact.
+            </p>
+          </div>
+          <div className="coverage-grid">
+            <a className="coverage-card" href="/road-to-rwanda#announcement">
+              <span className="coverage-no">01</span>
+              <h3>The agreement is real.</h3>
+              <p>Ten years, the early 2030s, and a circuit in Bugesera. That is what the FIA has published.</p>
+              <span className="coverage-tag">OFFICIAL ANNOUNCEMENT</span>
+            </a>
+            <a className="coverage-card" href="/road-to-rwanda#kigali-awards">
+              <span className="coverage-no">02</span>
+              <h3>Kigali already hosted the night.</h3>
+              <p>The 2024 FIA Awards were held in Rwanda, the first time that ceremony came to Africa.</p>
+              <span className="coverage-tag">REPORTING</span>
+            </a>
+            <a className="coverage-card" href="/road-to-rwanda#open-questions">
+              <span className="coverage-no">03</span>
+              <h3>The date is not a fact yet.</h3>
+              <p>No inaugural season, no race day, and no published layout. Those stay open until the FIA says otherwise.</p>
+              <span className="coverage-tag">OPEN QUESTION</span>
+            </a>
+          </div>
+          <p className="desk-more">
+            <a href="/road-to-rwanda">Open the desk</a>
+            <a href="/guides">Read the guides</a>
+          </p>
+        </section>
+
+        <section className="section next-section" id="next" aria-labelledby="next-title">
+          <div className="section-kicker">
+            <span>04</span>
             <span>THE ROAD AHEAD</span>
             <span className="kicker-line" />
             <span>WHAT WE'RE FOLLOWING</span>
@@ -260,7 +299,7 @@ export default async function AmakuruPage() {
         {season && (
           <section className="section grid-strip" id="this-season" aria-labelledby="grid-title">
             <div className="section-kicker">
-              <span>04</span>
+              <span>05</span>
               <span>THIS SEASON</span>
               <span className="kicker-line" />
               <span>FORMULA 1 · {season.season}</span>

@@ -9,6 +9,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: SITE_URL, lastModified, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/rwanda-f1-grand-prix`, lastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/road-to-rwanda`, lastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides`, lastModified, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/guides/grand-prix-weekend`, lastModified, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/guides/undercut`, lastModified, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/guides/championship-points`, lastModified, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/season`, lastModified, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/season/results`, lastModified, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/season/standings`, lastModified, changeFrequency: "daily", priority: 0.8 },

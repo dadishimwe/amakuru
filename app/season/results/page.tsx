@@ -1,4 +1,5 @@
 import { ResultsExplorer } from "@/components/season/results-explorer"
+import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { SeasonFrame } from "@/components/season/season-frame"
 import { getF1SeasonData } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
@@ -43,7 +44,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         }] : []),
       ]}
     >
-      <ResultsExplorer races={data.classifiedRaces} initialRound={round} />
+      {data.unavailable ? <SeasonUnavailable /> : <ResultsExplorer races={data.classifiedRaces} initialRound={round} />}
     </SeasonFrame>
   )
 }

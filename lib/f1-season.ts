@@ -152,6 +152,7 @@ export type F1SeasonData = {
   gridTeams: GridTeam[]
   latestRace: F1Race | null
   updatedAt: string
+  unavailable: boolean
 }
 
 async function getAllSeasonResults(): Promise<F1Race[]> {
@@ -417,6 +418,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
     gridTeams: picturedTeams,
     latestRace: picturedSchedule.find((race) => race.round === latestRound) ?? null,
     updatedAt: new Date().toISOString(),
+    unavailable: schedule == null,
   }
 }
 

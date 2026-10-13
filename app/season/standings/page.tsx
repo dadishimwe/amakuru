@@ -1,4 +1,5 @@
 import { SeasonFrame } from "@/components/season/season-frame"
+import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { StandingsExplorer } from "@/components/season/standings-explorer"
 import { getF1SeasonData } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
@@ -29,12 +30,12 @@ export default async function StandingsPage() {
         { name: "Standings", path: PATH },
       ])}
     >
-      <StandingsExplorer
+      {data.unavailable ? <SeasonUnavailable /> : <StandingsExplorer
         drivers={data.driverStandings}
         teams={data.constructorStandings}
         driverImages={Object.fromEntries(data.gridDrivers.map((driver) => [driver.id, driver.image]))}
         teamImages={Object.fromEntries(data.gridTeams.map((team) => [team.id, team.image]))}
-      />
+      />}
     </SeasonFrame>
   )
 }
