@@ -672,6 +672,18 @@ button { font: inherit; }
 .crest, .crest-fallback { object-fit: contain; padding: 3px; background: #fbfaf3; }
 .portrait-large, .crest-large { width: 100%; height: 180px; flex-basis: auto; }
 .crest-large { height: 120px; object-fit: contain; padding: 18px; }
+.team-directory-card .crest-large,
+.team-crest-panel .crest-large {
+  width: 100%;
+  height: 168px;
+  flex-basis: auto;
+  padding: 0;
+  object-fit: contain;
+  object-position: left center;
+  background: transparent;
+  border: 0;
+}
+.team-crest-panel .crest-large { height: 220px; }
 .identity-cell { display: inline-flex; align-items: center; gap: 8px; }
 .race-photo { margin: 0 0 8px; }
 .race-photo img { display: block; width: 100%; height: min(420px, 56vw); object-fit: cover; background: var(--ink); }
@@ -738,10 +750,10 @@ button { font: inherit; }
 .season-select li button:hover { background: var(--acid); }
 .profile-portrait { max-width: 280px; margin: 0 0 18px; }
 .team-crest-panel {
-  margin-bottom: 22px;
+  margin-bottom: 28px;
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.4fr);
+  gap: 28px;
   align-items: center;
 }
 .team-driver-row { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -885,13 +897,14 @@ button { font: inherit; }
   .season-page .directory-card p,
   .season-page .directory-card strong { font-size: 16px; }
   .season-page .directory-kicker { font-size: 12px; }
-  .season-page .portrait,
-  .season-page .crest { width: 44px; height: 44px; flex-basis: 44px; }
-  .season-page .portrait-large { height: 240px; }
-  .season-page .crest-large { height: 160px; }
+  .season-page .portrait:not(.portrait-large),
+  .season-page .crest:not(.crest-large) { width: 44px; height: 44px; flex-basis: 44px; }
+  .season-page .portrait-large { width: 100%; height: 240px; flex-basis: auto; }
+  .season-page .team-directory-card .crest-large { height: 200px; }
   .season-page .profile-portrait { max-width: 380px; }
   .season-page .profile-facts > * { padding: 12px 14px; font-size: 16px; }
-  .season-page .team-crest-panel { grid-template-columns: 240px minmax(0, 1fr); }
+  .season-page .team-crest-panel { grid-template-columns: minmax(360px, 520px) minmax(0, 1fr); }
+  .season-page .team-crest-panel .crest-large { height: 280px; }
   .season-page .team-driver-row a { font-size: 16px; }
   .season-page .official-link { font-size: 13px; }
   .season-page .season-attribution p { font-size: 14px; }
