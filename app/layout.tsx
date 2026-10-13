@@ -4,6 +4,8 @@ import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google"
 import { Courier_Prime } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SeoJsonLd } from "@/components/seo-json-ld"
+import { EasterEgg } from "@/components/easter-egg"
+import { GoogleAnalyticsConsent } from "@/components/google-analytics-consent"
 import {
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
@@ -110,6 +112,10 @@ export default function RootLayout({
           Skip to main content
         </a>
         <SeoJsonLd />
+        <React.Suspense fallback={null}>
+          <GoogleAnalyticsConsent />
+        </React.Suspense>
+        <EasterEgg />
         {children}
         <Analytics />
       </body>
