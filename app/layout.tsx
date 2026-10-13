@@ -18,11 +18,13 @@ const _courierPrime = Courier_Prime({ weight: ["400", "700"], subsets: ["latin"]
 const _ibmPlexSans = IBM_Plex_Sans({ weight: ["300", "400", "500", "600"], subsets: ["latin"] })
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+const pageTitle = "Formula 1, through a Rwanda lens"
+const socialImage = "/images/rwanda-racing-hero.webp"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Rwanda-first news, verified`,
+    default: `${SITE_NAME} — ${pageTitle}`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -30,7 +32,7 @@ export const metadata: Metadata = {
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
-  category: "news",
+  category: "sports",
   robots: {
     index: true,
     follow: true,
@@ -44,39 +46,26 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
-    languages: {
-      en: "/",
-      rw: "/",
-      fr: "/",
-    },
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    alternateLocale: ["fr_FR"],
+    locale: "en_RW",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Rwanda-first news, verified`,
-    description:
-      "Credibility scoring, community verification, journalist development, and multilingual audio summaries for Rwanda and the region.",
-    images: [
-      {
-        url: "/images/arc.png",
-        alt: "Amakuru — visual identity and platform preview",
-      },
-    ],
+    title: `${SITE_NAME} — ${pageTitle}`,
+    description: SITE_DESCRIPTION,
+    images: [{ url: socialImage, alt: "Formula 1 racing in a Kigali-inspired night setting — illustrative artwork" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Rwanda-first news, verified`,
-    description:
-      "Credibility scoring, community verification, and multilingual audio summaries.",
-    images: ["/images/arc.png"],
+    title: `${SITE_NAME} — ${pageTitle}`,
+    description: SITE_DESCRIPTION,
+    images: [socialImage],
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: SITE_NAME,
+    title: "Amakuru",
     statusBarStyle: "default",
   },
   formatDetection: {
