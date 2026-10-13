@@ -312,10 +312,17 @@ export default function AmakuruPage() {
           <a href="#rwanda">Rwanda's moment</a>
           <a href="#next">The road ahead</a>
           <a href={FIA_ANNOUNCEMENT} target="_blank" rel="noreferrer">FIA source <ArrowUpRight /></a>
+          <button
+            className="footer-privacy"
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("amakuru:open-privacy-settings"))}
+          >
+            Privacy choices
+          </button>
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Amakuru Motorsport</span>
-          <span>INDEPENDENT EDITORIAL · KIGALI, RWANDA</span>
+          <span>INDEPENDENT EDITORIAL · DADI ISHIMWE · KIGALI, RWANDA</span>
         </div>
       </footer>
     </div>
