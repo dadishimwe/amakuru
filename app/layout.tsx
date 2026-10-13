@@ -20,6 +20,7 @@ const _courierPrime = Courier_Prime({ weight: ["400", "700"], subsets: ["latin"]
 const _ibmPlexSans = IBM_Plex_Sans({ weight: ["300", "400", "500", "600"], subsets: ["latin"] })
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+const isPreviewDeployment = process.env.VERCEL_ENV === "preview"
 const pageTitle = "Formula 1, through a Rwanda lens"
 const socialImage = "/images/rwanda-racing-hero.webp"
 
@@ -36,11 +37,11 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   category: "sports",
   robots: {
-    index: true,
-    follow: true,
+    index: !isPreviewDeployment,
+    follow: !isPreviewDeployment,
     googleBot: {
-      index: true,
-      follow: true,
+      index: !isPreviewDeployment,
+      follow: !isPreviewDeployment,
       "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,

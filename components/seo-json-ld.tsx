@@ -2,7 +2,6 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site"
 
 const ORG_ID = `${SITE_URL}/#organization`
 const WEBSITE_ID = `${SITE_URL}/#website`
-const PAGE_TITLE = `${SITE_NAME} — Formula 1, through a Rwanda lens`
 
 export function SeoJsonLd() {
   const graph = [
@@ -13,6 +12,7 @@ export function SeoJsonLd() {
       url: SITE_URL,
       logo: { "@type": "ImageObject", url: `${SITE_URL}/apple-icon.png` },
       description: SITE_DESCRIPTION,
+      areaServed: { "@type": "Country", name: "Rwanda" },
     },
     {
       "@type": "WebSite",
@@ -23,16 +23,6 @@ export function SeoJsonLd() {
       publisher: { "@id": ORG_ID },
       inLanguage: "en",
     },
-    {
-      "@type": "WebPage",
-      "@id": `${SITE_URL}/#webpage`,
-      url: `${SITE_URL}/`,
-      name: PAGE_TITLE,
-      description: SITE_DESCRIPTION,
-      isPartOf: { "@id": WEBSITE_ID },
-      about: { "@id": ORG_ID },
-      inLanguage: "en",
-    },
   ]
 
   const data = { "@context": "https://schema.org", "@graph": graph }
@@ -40,7 +30,7 @@ export function SeoJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   )
 }

@@ -2,14 +2,22 @@
 
 import Script from "next/script"
 import { usePathname } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 const GA_MEASUREMENT_ID = "G-X3HHG0R81C"
 const CONSENT_KEY = "amakuru-google-analytics-consent-v1"
 const GA_HOSTS = new Set(["amakuru.rw", "www.amakuru.rw"])
+const TRACKING_QUERY_KEYS = new Set([
+  "gclid",
+  "dclid",
+  "gbraid",
+  "wbraid",
+  "fbclid",
+  "msclkid",
+  "twclid",
+])
 
 type ConsentChoice = "accepted" | "rejected" | null
-
 type GtagCommand = [string, ...unknown[]]
 
 declare global {
@@ -27,13 +35,37 @@ const deniedConsent = {
   ad_personalization: "denied",
 }
 
+function safeReferrer(value: string): string {
+  if (!value) return ""
+  try {
+    const referrer = new URL(value)
+    return `${referrer.origin}${referrer.pathname}`
+  } catch {
+    return ""
+  }
+}
+
+function pageLocation(pathname: string): string {
+  const current = new URL(window.location.href)
+  const allowed = new URLSearchParams()
+  current.searchParams.forEach((value, key) => {
+    const normalized = key.toLowerCase()
+    if (normalized.startsWith("utm_") || TRACKING_QUERY_KEYS.has(normalized)) {
+      allowed.append(key, value)
+    }
+  })
+  const query = allowed.toString()
+  return `${current.origin}${pathname}${query ? `?${query}` : ""}`
+}
+
 export function GoogleAnalyticsConsent() {
   const pathname = usePathname()
   const [choice, setChoice] = useState<ConsentChoice>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [isLiveDomain, setIsLiveDomain] = useState(false)
   const [shouldLoadTag, setShouldLoadTag] = useState(false)
-  const [tagReady, setTagReady] = useState(false)
+  const [analyticsReady, setAnalyticsReady] = useState(false)
+  const previousPage = useRef<string | null>(null)
 
   useEffect(() => {
     const host = window.location.hostname.toLowerCase()
@@ -55,13 +87,14 @@ export function GoogleAnalyticsConsent() {
         window.gtag("consent", "update", deniedConsent)
       }
       setShouldLoadTag(false)
-      setTagReady(false)
+      setAnalyticsReady(false)
+      previousPage.current = null
       return
     }
 
     window.dataLayer = window.dataLayer || []
-    window.gtag = window.gtag || function gtag(...args: GtagCommand) {
-      window.dataLayer?.push(args)
+    window.gtag = window.gtag || function gtag() {
+      window.dataLayer?.push(arguments)
     }
 
     if (!window.__amakuruGaConfigured) {
@@ -80,17 +113,28 @@ export function GoogleAnalyticsConsent() {
       })
     }
 
+    // Mark ready as soon as commands are queued. Waiting on next/script's onReady
+    // can miss the first route event while the external library is loading.
     setShouldLoadTag(true)
+    setAnalyticsReady(true)
   }, [choice, isLiveDomain])
 
   useEffect(() => {
-    if (!tagReady || choice !== "accepted" || !isLiveDomain || !window.gtag) return
+    if (!analyticsReady || choice !== "accepted" || !isLiveDomain || !window.gtag) return
+
+    const path = pathname || "/"
+    const location = pageLocation(path)
+    const referrer = previousPage.current ?? safeReferrer(document.referrer)
+
     window.gtag("event", "page_view", {
-      page_path: pathname || "/",
-      page_location: `${window.location.origin}${pathname || "/"}`,
+      page_path: path,
+      page_location: location,
       page_title: document.title,
+      page_referrer: referrer,
     })
-  }, [choice, isLiveDomain, pathname, tagReady])
+
+    previousPage.current = `${window.location.origin}${path}`
+  }, [analyticsReady, choice, isLiveDomain, pathname])
 
   const saveChoice = useCallback((nextChoice: Exclude<ConsentChoice, null>) => {
     window.localStorage.setItem(CONSENT_KEY, nextChoice)
@@ -107,7 +151,6 @@ export function GoogleAnalyticsConsent() {
           id="amakuru-google-analytics"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
-          onReady={() => setTagReady(true)}
         />
       )}
 
@@ -125,7 +168,7 @@ export function GoogleAnalyticsConsent() {
             <p>
               {!isLiveDomain
                 ? "Google Analytics only runs on amakuru.rw after consent. This preview does not send visits to the live property."
-                : "Optional Google Analytics helps us understand which pages fans read. It stays off unless you allow it. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice here in the footer."}
+                : "Optional Google Analytics helps us understand which pages fans read and what brought them here. It stays off unless you allow it. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice here in the footer."}
             </p>
             {isLiveDomain && (
               <>
