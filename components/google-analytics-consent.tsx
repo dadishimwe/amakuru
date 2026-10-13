@@ -58,6 +58,33 @@ function pageLocation(pathname: string): string {
   return `${current.origin}${pathname}${query ? `?${query}` : ""}`
 }
 
+function ensureGtag() {
+  window.dataLayer = window.dataLayer || []
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer?.push(arguments)
+  }
+
+  if (window.__amakuruGaConfigured) return
+
+  window.gtag("consent", "default", deniedConsent)
+  window.gtag("consent", "update", {
+    ...deniedConsent,
+    analytics_storage: "granted",
+  })
+  window.gtag("js", new Date())
+  window.gtag("config", GA_MEASUREMENT_ID, { send_page_view: false })
+  window.__amakuruGaConfigured = true
+}
+
+function sendPageView(pathname: string, referrer: string) {
+  window.gtag?.("event", "page_view", {
+    page_path: pathname,
+    page_location: pageLocation(pathname),
+    page_title: document.title,
+    page_referrer: referrer,
+  })
+}
+
 export function GoogleAnalyticsConsent() {
   const pathname = usePathname()
   const [choice, setChoice] = useState<ConsentChoice>(null)
@@ -66,6 +93,7 @@ export function GoogleAnalyticsConsent() {
   const [shouldLoadTag, setShouldLoadTag] = useState(false)
   const [analyticsReady, setAnalyticsReady] = useState(false)
   const previousPage = useRef<string | null>(null)
+  const landingSent = useRef(false)
 
   useEffect(() => {
     const host = window.location.hostname.toLowerCase()
@@ -82,58 +110,46 @@ export function GoogleAnalyticsConsent() {
   }, [])
 
   useEffect(() => {
-    if (!isLiveDomain || choice !== "accepted") {
-      if (choice === "rejected" && window.gtag) {
-        window.gtag("consent", "update", deniedConsent)
-      }
-      setShouldLoadTag(false)
-      setAnalyticsReady(false)
-      previousPage.current = null
-      return
-    }
+    if (!isLiveDomain) return
 
-    window.dataLayer = window.dataLayer || []
-    window.gtag = window.gtag || function gtag() {
-      window.dataLayer?.push(arguments)
-    }
-
-    if (!window.__amakuruGaConfigured) {
-      window.gtag("consent", "default", deniedConsent)
-      window.gtag("consent", "update", {
-        ...deniedConsent,
-        analytics_storage: "granted",
-      })
-      window.gtag("js", new Date())
-      window.gtag("config", GA_MEASUREMENT_ID, { send_page_view: false })
-      window.__amakuruGaConfigured = true
-    } else {
-      window.gtag("consent", "update", {
-        ...deniedConsent,
-        analytics_storage: "granted",
-      })
-    }
-
-    // Mark ready as soon as commands are queued. Waiting on next/script's onReady
-    // can miss the first route event while the external library is loading.
+    ensureGtag()
+    window.gtag?.("consent", "update", {
+      ...deniedConsent,
+      analytics_storage: "granted",
+    })
     setShouldLoadTag(true)
     setAnalyticsReady(true)
+
+    if (!landingSent.current) {
+      const path = window.location.pathname || "/"
+      sendPageView(path, safeReferrer(document.referrer))
+      previousPage.current = `${window.location.origin}${path}`
+      landingSent.current = true
+    }
+
+    // Arrival is always counted. Page-by-page tracking waits for Allow.
+    // Delay the denial so the landing hit is sent before storage is turned off.
+    if (choice === "accepted") return
+    const timer = window.setTimeout(() => {
+      if (window.localStorage.getItem(CONSENT_KEY) === "accepted") return
+      window.gtag?.("consent", "update", deniedConsent)
+    }, 1500)
+    return () => window.clearTimeout(timer)
   }, [choice, isLiveDomain])
 
   useEffect(() => {
     if (!analyticsReady || choice !== "accepted" || !isLiveDomain || !window.gtag) return
 
     const path = pathname || "/"
-    const location = pageLocation(path)
-    const referrer = previousPage.current ?? safeReferrer(document.referrer)
+    const current = `${window.location.origin}${path}`
+    if (previousPage.current === current) return
 
-    window.gtag("event", "page_view", {
-      page_path: path,
-      page_location: location,
-      page_title: document.title,
-      page_referrer: referrer,
+    window.gtag("consent", "update", {
+      ...deniedConsent,
+      analytics_storage: "granted",
     })
-
-    previousPage.current = `${window.location.origin}${path}`
+    sendPageView(path, previousPage.current ?? safeReferrer(document.referrer))
+    previousPage.current = current
   }, [analyticsReady, choice, isLiveDomain, pathname])
 
   const saveChoice = useCallback((nextChoice: Exclude<ConsentChoice, null>) => {
@@ -167,8 +183,8 @@ export function GoogleAnalyticsConsent() {
             </h2>
             <p>
               {!isLiveDomain
-                ? "Google Analytics only runs on amakuru.rw after consent. This preview does not send visits to the live property."
-                : "Optional Google Analytics helps us understand which pages fans read and what brought them here. It stays off unless you allow it. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice here in the footer."}
+                ? "Google Analytics only runs on amakuru.rw. This preview does not send visits to the live property."
+                : "Every visit is counted as soon as you arrive. Allowing Google Analytics also lets us see which pages you read afterward. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice in the footer."}
             </p>
             {isLiveDomain && (
               <>
