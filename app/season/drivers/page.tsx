@@ -22,6 +22,7 @@ export default async function DriversPage() {
       kicker="THE GRID"
       title={`${data.season} drivers.`}
       dek="Filter by team or search a driver. Each card opens a season page with every classified finish."
+      heroImage="/images/rwanda-racing-hero.webp"
       crumbs={[{ label: "Home", href: "/" }, { label: "Season", href: "/season" }, { label: "Drivers" }]}
       jsonLd={[
         breadcrumbJsonLd([

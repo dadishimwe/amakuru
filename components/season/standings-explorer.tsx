@@ -1,15 +1,20 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { Crest, Portrait } from "@/components/season/season-media"
 import type { ConstructorStanding, DriverStanding } from "@/lib/f1-season"
 import { formatPoints, personName } from "@/lib/f1-season"
 
 export function StandingsExplorer({
   drivers,
   teams,
+  driverImages,
+  teamImages,
 }: {
   drivers: DriverStanding[]
   teams: ConstructorStanding[]
+  driverImages: Record<string, string>
+  teamImages: Record<string, string>
 }) {
   const [query, setQuery] = useState("")
   const needle = query.trim().toLowerCase()
@@ -47,6 +52,8 @@ export function StandingsExplorer({
               detailHref: row.Constructors?.[0]?.constructorId ? `/season/teams/${row.Constructors[0].constructorId}` : "",
               extra: row.wins || "0",
               points: row.points,
+              image: driverImages[row.Driver?.driverId || ""] || "",
+              kind: "driver" as const,
             }))}
           />
         </article>
@@ -62,6 +69,8 @@ export function StandingsExplorer({
               detailHref: "",
               extra: row.wins || "0",
               points: row.points,
+              image: teamImages[row.Constructor?.constructorId || ""] || "",
+              kind: "team" as const,
             }))}
           />
         </article>
@@ -73,7 +82,7 @@ export function StandingsExplorer({
 function StandingTable({
   rows,
 }: {
-  rows: Array<{ key: string; position: string; name: string; href: string; detail: string; detailHref: string; extra: string; points?: string }>
+  rows: Array<{ key: string; position: string; name: string; href: string; detail: string; detailHref: string; extra: string; points?: string; image: string; kind: "driver" | "team" }>
 }) {
   if (rows.length === 0) return <p className="season-empty">Nothing matches that search.</p>
   return (
@@ -92,7 +101,12 @@ function StandingTable({
           {rows.map((row) => (
             <tr key={row.key}>
               <td className="standings-position">{row.position.padStart(2, "0")}</td>
-              <td className="standings-name">{row.href ? <a href={row.href}>{row.name}</a> : row.name}</td>
+              <td className="standings-name">
+                <span className="identity-cell">
+                  {row.kind === "driver" ? <Portrait src={row.image} name={row.name} /> : <Crest src={row.image} name={row.name} />}
+                  {row.href ? <a href={row.href}>{row.name}</a> : row.name}
+                </span>
+              </td>
               <td className="standings-team">{row.detailHref ? <a href={row.detailHref}>{row.detail}</a> : row.detail}</td>
               <td>{row.extra}</td>
               <td className="standings-points">{formatPoints(row.points)}</td>

@@ -1,4 +1,7 @@
+import { SeasonSubnav } from "@/components/season/season-subnav"
 import { BrandMark, SiteFooter, SiteNavigation } from "@/components/site-chrome"
+import { Crest, Portrait } from "@/components/season/season-media"
+import { formatPoints, getF1SeasonData, type F1SeasonData } from "@/lib/f1-season"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site"
 
 const FIA_ANNOUNCEMENT =
@@ -21,7 +24,15 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
   )
 }
 
-export default function AmakuruPage() {
+export default async function AmakuruPage() {
+  let season: F1SeasonData | null = null
+  try {
+    season = await getF1SeasonData()
+  } catch {
+    season = null
+  }
+  const homeDrivers = season?.gridDrivers.slice(0, 8) ?? []
+  const homeTeams = season?.gridTeams ?? []
   const homePageData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -48,6 +59,7 @@ export default function AmakuruPage() {
       </div>
 
       <SiteNavigation />
+      <SeasonSubnav />
 
       <main id="main-content">
         <section className="hero" id="top" aria-labelledby="hero-title">
@@ -244,6 +256,44 @@ export default function AmakuruPage() {
             </article>
           </div>
         </section>
+
+        {season && (
+          <section className="section grid-strip" id="this-season" aria-labelledby="grid-title">
+            <div className="section-kicker">
+              <span>04</span>
+              <span>THIS SEASON</span>
+              <span className="kicker-line" />
+              <span>FORMULA 1 · {season.season}</span>
+            </div>
+            <div className="next-heading-grid">
+              <h2 id="grid-title">The grid,<br /><em>in pictures.</em></h2>
+              <p>
+                Follow the {season.season} championship from Kigali: the drivers, the teams, and every classified round.
+              </p>
+            </div>
+            <div className="home-driver-row">
+              {homeDrivers.map((driver) => (
+                <a key={driver.id} href={`/season/drivers/${driver.id}`}>
+                  <Portrait src={driver.image} name={driver.code || driver.name} large />
+                  <strong>{driver.name}</strong>
+                  <span>{driver.team || driver.code}</span>
+                </a>
+              ))}
+            </div>
+            <div className="home-team-row">
+              {homeTeams.map((team) => (
+                <a key={team.id} href={`/season/teams/${team.id}`}>
+                  <Crest src={team.image} name={team.name} />
+                  <span>{team.name}</span>
+                  <small>{formatPoints(team.points)} pts</small>
+                </a>
+              ))}
+            </div>
+            <a className="button button-acid" href="/season">
+              Open the {season.season} season hub <span>→</span>
+            </a>
+          </section>
+        )}
 
         <section className="closing-section" aria-labelledby="closing-title">
           <div className="closing-mark" aria-hidden="true"><BrandMark /></div>

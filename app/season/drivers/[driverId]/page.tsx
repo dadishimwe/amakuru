@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
 import { driverResults, formatPoints, getF1SeasonData } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
@@ -46,6 +47,8 @@ export default async function DriverPage({ params }: { params: Promise<{ driverI
         { label: "Drivers", href: "/season/drivers" },
         { label: driver.name },
       ]}
+      heroImage={driver.image}
+      heroAlt=""
       jsonLd={[
         breadcrumbJsonLd([
           { name: "Home", path: "/" },
@@ -64,6 +67,9 @@ export default async function DriverPage({ params }: { params: Promise<{ driverI
         },
       ]}
     >
+      <figure className="profile-portrait">
+        <Portrait src={driver.image} name={driver.code || driver.name} large />
+      </figure>
       <div className="profile-facts">
         <span>No. {driver.number || "—"}</span>
         <span>{driver.nationality || "Nationality TBC"}</span>

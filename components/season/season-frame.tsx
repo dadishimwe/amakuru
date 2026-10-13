@@ -1,14 +1,7 @@
 import type { ReactNode } from "react"
+import { SeasonSubnav } from "@/components/season/season-subnav"
 import { SiteFooter, SiteNavigation } from "@/components/site-chrome"
 import { formatUpdateTime } from "@/lib/f1-season"
-
-const SECTIONS = [
-  { href: "/season", label: "Schedule" },
-  { href: "/season/results", label: "Results" },
-  { href: "/season/standings", label: "Standings" },
-  { href: "/season/drivers", label: "Drivers" },
-  { href: "/season/teams", label: "Teams" },
-]
 
 export function SeasonFrame({
   current,
@@ -19,6 +12,8 @@ export function SeasonFrame({
   dek,
   crumbs,
   jsonLd,
+  heroImage,
+  heroAlt,
   children,
 }: {
   current: string
@@ -29,6 +24,8 @@ export function SeasonFrame({
   dek: string
   crumbs: Array<{ label: string; href?: string }>
   jsonLd: unknown
+  heroImage?: string
+  heroAlt?: string
   children: ReactNode
 }) {
   return (
@@ -38,13 +35,7 @@ export function SeasonFrame({
         <span className="topline-right"><i aria-hidden="true" /> Kigali · Rwanda</span>
       </div>
       <SiteNavigation />
-      <nav className="season-subnav" aria-label="Championship sections">
-        {SECTIONS.map((section) => (
-          <a key={section.href} href={section.href} aria-current={current === section.href ? "page" : undefined}>
-            {section.label}
-          </a>
-        ))}
-      </nav>
+      <SeasonSubnav current={current} />
 
       <main className="feature-page" id="main-content">
         <nav className="breadcrumbs" aria-label="Breadcrumb">
@@ -56,7 +47,9 @@ export function SeasonFrame({
           ))}
         </nav>
 
-        <header className="subpage-hero season-hero">
+        <header className={`subpage-hero season-hero${heroImage ? " season-hero-photo" : ""}`}>
+          {heroImage ? <img className="season-hero-image" src={heroImage} alt={heroAlt || ""} /> : null}
+          {heroImage ? <span className="season-hero-shade" aria-hidden="true" /> : null}
           <div className="section-kicker section-kicker-light">
             <span>AM / SEASON 001</span><span className="kicker-line" /><span>FORMULA 1 · {year}</span>
           </div>
@@ -74,7 +67,7 @@ export function SeasonFrame({
           <aside className="season-attribution">
             <span className="coverage-tag">DATA & TERMS</span>
             <p>
-              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Used for personal, non-commercial purposes. This independent site is not affiliated with Formula 1, the FIA, or the teams linked from these pages.
+              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Driver portraits, team crests and circuit images come from Wikimedia and remain the property of their owners. This independent site is not affiliated with Formula 1, the FIA, or the teams linked from these pages.
             </p>
             <p>Times are shown in Kigali time (CAT, UTC+2). Data can lag the official classification, so check the official event schedule before travel.</p>
           </aside>

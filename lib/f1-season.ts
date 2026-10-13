@@ -42,6 +42,7 @@ export type F1Race = {
   date?: string
   time?: string
   url?: string
+  image?: string
   Circuit?: {
     circuitId?: string
     circuitName?: string
@@ -81,6 +82,8 @@ export type ClassifiedResult = {
   time: string
   points: string
   status: string
+  driverImage: string
+  teamImage: string
 }
 
 export type ClassifiedRace = {
@@ -88,6 +91,7 @@ export type ClassifiedRace = {
   name: string
   place: string
   circuit: string
+  circuitImage: string
   when: string
   results: ClassifiedResult[]
 }
@@ -105,6 +109,7 @@ export type GridDriver = {
   points: string
   position: string
   wins: string
+  image: string
 }
 
 export type GridTeam = {
@@ -117,7 +122,8 @@ export type GridTeam = {
   points: string
   position: string
   wins: string
-  drivers: Array<{ id: string; name: string; code: string; number: string }>
+  image: string
+  drivers: Array<{ id: string; name: string; code: string; number: string; image: string }>
 }
 
 type JolpicaPayload = {
@@ -217,7 +223,61 @@ function classifiedResult(result: F1Result, index: number): ClassifiedResult {
     time: result.Time?.time || result.status || "—",
     points: result.points || "0",
     status: result.status || "",
+    driverImage: "",
+    teamImage: "",
   }
+}
+
+function wikiTitle(url?: string): string {
+  if (!url) return ""
+  try {
+    const parts = new URL(url).pathname.split("/").filter(Boolean)
+    const wikiIndex = parts.findIndex((part) => part === "wiki")
+    const raw = wikiIndex >= 0 ? parts[wikiIndex + 1] : parts.at(-1)
+    return raw ? decodeURIComponent(raw).replace(/_/g, " ") : ""
+  } catch {
+    return ""
+  }
+}
+
+function wikiKey(title: string): string {
+  return title.replace(/_/g, " ").trim().toLowerCase()
+}
+
+async function wikiThumbnails(titles: string[]): Promise<Map<string, string>> {
+  const unique = new Map<string, string>()
+  for (const title of titles) {
+    const key = wikiKey(title)
+    if (key && !unique.has(key)) unique.set(key, title)
+  }
+  const images = new Map<string, string>()
+  const queue = [...unique.entries()]
+  async function worker() {
+    while (queue.length > 0) {
+      const next = queue.shift()
+      if (!next) return
+      const [key, title] = next
+      try {
+        const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`, {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "AmakuruMotorsport/1.0 (https://www.amakuru.rw)",
+          },
+          next: { revalidate: JOLPICA_REFRESH_SECONDS },
+        })
+        if (!response.ok) continue
+        const body = (await response.json()) as { thumbnail?: { source?: string }; originalimage?: { source?: string } }
+        const original = body.originalimage?.source || ""
+        const thumb = body.thumbnail?.source || ""
+        const source = original.endsWith(".svg") ? original : thumb.replace(/\/\d+px-/, "/640px-") || original
+        if (source) images.set(key, source)
+      } catch {
+        continue
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: 6 }, () => worker()))
+  return images
 }
 
 export async function getF1SeasonData(): Promise<F1SeasonData> {
@@ -246,6 +306,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
     name: race.raceName || "Grand Prix",
     place: placeName(race),
     circuit: race.Circuit?.circuitName || "",
+    circuitImage: "",
     when: formatKigaliDateTime(race),
     results: (race.Results ?? []).map(classifiedResult),
   }))
@@ -268,6 +329,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
       points: row.points || "0",
       position: row.position || "",
       wins: row.wins || "0",
+      image: "",
     }]
   })
 
@@ -275,7 +337,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
   for (const driver of gridDrivers) {
     if (!driver.teamId) continue
     const list = driversByTeam.get(driver.teamId) ?? []
-    list.push({ id: driver.id, name: driver.name, code: driver.code, number: driver.number })
+    list.push({ id: driver.id, name: driver.name, code: driver.code, number: driver.number, image: "" })
     driversByTeam.set(driver.teamId, list)
   }
 
@@ -300,19 +362,54 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
         points: standing?.points || "0",
         position: standing?.position || "",
         wins: standing?.wins || "0",
+        image: "",
         drivers: driversByTeam.get(team.constructorId as string) ?? [],
       }
     })
 
+  const thumbs = await wikiThumbnails([
+    ...gridDrivers.map((driver) => driver.wikipedia),
+    ...gridTeams.map((team) => team.wikipedia),
+    ...scheduleRaces.map((race) => race.Circuit?.url || ""),
+    ...completedRaces.map((race) => race.Circuit?.url || ""),
+  ].map(wikiTitle))
+  const thumbFor = (url?: string) => {
+    const title = wikiTitle(url)
+    return title ? thumbs.get(wikiKey(title)) || "" : ""
+  }
+  const picturedDrivers = gridDrivers.map((driver) => ({ ...driver, image: thumbFor(driver.wikipedia) }))
+  const driverImageById = new Map(picturedDrivers.map((driver) => [driver.id, driver.image]))
+  const picturedTeams = gridTeams.map((team) => ({
+    ...team,
+    image: thumbFor(team.wikipedia),
+    drivers: team.drivers.map((driver) => ({ ...driver, image: driverImageById.get(driver.id) || "" })),
+  }))
+  const teamImageById = new Map(picturedTeams.map((team) => [team.id, team.image]))
+  const picturedRaces = classifiedRaces.map((race) => {
+    const source = completedRaces.find((item) => item.round === race.round)
+    return {
+      ...race,
+      circuitImage: thumbFor(source?.Circuit?.url),
+      results: race.results.map((result) => ({
+        ...result,
+        driverImage: driverImageById.get(result.driverId) || "",
+        teamImage: teamImageById.get(result.teamId) || "",
+      })),
+    }
+  })
+
+  const picturedSchedule = scheduleRaces.map((race) => ({ ...race, image: thumbFor(race.Circuit?.url) }))
+  const latestRound = completedRaces.at(-1)?.round
+
   return {
     season: schedule?.MRData?.RaceTable?.season ?? String(new Date().getUTCFullYear()),
-    races: scheduleRaces,
-    classifiedRaces,
+    races: picturedSchedule,
+    classifiedRaces: picturedRaces,
     driverStandings: driverRows,
     constructorStandings: constructorRows,
-    gridDrivers,
-    gridTeams,
-    latestRace: completedRaces.at(-1) ?? null,
+    gridDrivers: picturedDrivers,
+    gridTeams: picturedTeams,
+    latestRace: picturedSchedule.find((race) => race.round === latestRound) ?? null,
     updatedAt: new Date().toISOString(),
   }
 }

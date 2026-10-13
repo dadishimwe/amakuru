@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { Crest, Portrait } from "@/components/season/season-media"
+import { SeasonSelect } from "@/components/season/season-select"
 import type { ClassifiedRace } from "@/lib/f1-season"
 import { formatPoints } from "@/lib/f1-season"
 
@@ -24,26 +26,27 @@ export function ResultsExplorer({ races, initialRound }: { races: ClassifiedRace
 
   return (
     <section aria-labelledby="results-title">
+      {race.circuitImage ? (
+        <figure className="race-photo">
+          <img src={race.circuitImage} alt="" />
+          <figcaption>{race.circuit || race.name}</figcaption>
+        </figure>
+      ) : null}
       <h2 className="season-section-title" id="results-title">{race.name}</h2>
       <p className="season-support">{race.place}{race.circuit ? ` · ${race.circuit}` : ""} · {race.when}</p>
       <div className="season-toolbar">
-        <label className="season-search">
-          <span>Round</span>
-          <select
-            value={race.round}
-            onChange={(event) => {
-              const next = event.target.value
-              setRound(next)
-              router.replace(`/season/results?round=${next}`, { scroll: false })
-            }}
-          >
-            {races.map((item) => (
-              <option key={item.round} value={item.round}>
-                R{item.round.padStart(2, "0")} · {item.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SeasonSelect
+          label="Round"
+          value={race.round}
+          options={races.map((item) => ({
+            value: item.round,
+            label: `R${item.round.padStart(2, "0")} · ${item.name}`,
+          }))}
+          onChange={(next) => {
+            setRound(next)
+            router.replace(`/season/results?round=${next}`, { scroll: false })
+          }}
+        />
         <label className="season-search">
           <span>Search</span>
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Driver or team" />
@@ -69,11 +72,19 @@ export function ResultsExplorer({ races, initialRound }: { races: ClassifiedRace
                 <td className="standings-position">{row.position.padStart(2, "0")}</td>
                 <td>{row.number}</td>
                 <td className="standings-name">
-                  {row.driverId ? <a href={`/season/drivers/${row.driverId}`}>{row.driver}</a> : row.driver}
-                  {row.code ? <small> {row.code}</small> : null}
+                  <span className="identity-cell">
+                    <Portrait src={row.driverImage} name={row.code || row.driver} />
+                    <span>
+                      {row.driverId ? <a href={`/season/drivers/${row.driverId}`}>{row.driver}</a> : row.driver}
+                      {row.code ? <small> {row.code}</small> : null}
+                    </span>
+                  </span>
                 </td>
                 <td className="standings-team">
-                  {row.teamId ? <a href={`/season/teams/${row.teamId}`}>{row.team}</a> : row.team}
+                  <span className="identity-cell">
+                    <Crest src={row.teamImage} name={row.team} />
+                    {row.teamId ? <a href={`/season/teams/${row.teamId}`}>{row.team}</a> : row.team}
+                  </span>
                 </td>
                 <td>{row.grid}</td>
                 <td>{row.laps}</td>

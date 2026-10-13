@@ -21,6 +21,7 @@ export default async function StandingsPage() {
       kicker="CHAMPIONSHIP TABLES"
       title={`${data.season} standings.`}
       dek="The full drivers' and constructors' championships. Search a name, then open a driver or team for the races behind the points."
+      heroImage="/images/rwanda-racing-hero.webp"
       crumbs={[{ label: "Home", href: "/" }, { label: "Season", href: "/season" }, { label: "Standings" }]}
       jsonLd={breadcrumbJsonLd([
         { name: "Home", path: "/" },
@@ -28,7 +29,12 @@ export default async function StandingsPage() {
         { name: "Standings", path: PATH },
       ])}
     >
-      <StandingsExplorer drivers={data.driverStandings} teams={data.constructorStandings} />
+      <StandingsExplorer
+        drivers={data.driverStandings}
+        teams={data.constructorStandings}
+        driverImages={Object.fromEntries(data.gridDrivers.map((driver) => [driver.id, driver.image]))}
+        teamImages={Object.fromEntries(data.gridTeams.map((team) => [team.id, team.image]))}
+      />
     </SeasonFrame>
   )
 }

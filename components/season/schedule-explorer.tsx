@@ -7,6 +7,7 @@ export type ScheduleRow = {
   name: string
   place: string
   circuit: string
+  image: string
   when: string
   qualifying: string
   status: "upcoming" | "completed"
@@ -55,6 +56,7 @@ export function ScheduleExplorer({ rows }: { rows: ScheduleRow[] }) {
         <div className="calendar-list">
           {visible.map((row) => (
             <article className="calendar-row" key={row.round}>
+              {row.image ? <img className="calendar-thumb" src={row.image} alt="" /> : <span className="calendar-thumb calendar-thumb-fallback" aria-hidden="true" />}
               <span className="calendar-round">{row.round.padStart(2, "0")}</span>
               <div className="calendar-race-name">
                 <h3>

@@ -1,6 +1,8 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { Crest, Portrait } from "@/components/season/season-media"
+import { SeasonSelect } from "@/components/season/season-select"
 import type { GridDriver, GridTeam } from "@/lib/f1-season"
 import { formatPoints } from "@/lib/f1-season"
 
@@ -23,13 +25,12 @@ export function DriversExplorer({ drivers }: { drivers: GridDriver[] }) {
   return (
     <>
       <div className="season-toolbar">
-        <label className="season-search">
-          <span>Team</span>
-          <select value={team} onChange={(event) => setTeam(event.target.value)}>
-            <option value="all">All teams</option>
-            {teams.map((name) => <option key={name} value={name}>{name}</option>)}
-          </select>
-        </label>
+        <SeasonSelect
+          label="Team"
+          value={team}
+          options={[{ value: "all", label: "All teams" }, ...teams.map((name) => ({ value: name, label: name }))]}
+          onChange={setTeam}
+        />
         <label className="season-search">
           <span>Search</span>
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, code or nationality" />
@@ -38,6 +39,7 @@ export function DriversExplorer({ drivers }: { drivers: GridDriver[] }) {
       <div className="directory-grid">
         {visible.map((driver) => (
           <a className="directory-card" key={driver.id} href={`/season/drivers/${driver.id}`}>
+            <Portrait src={driver.image} name={driver.code || driver.name} large />
             <span className="directory-kicker">{driver.code || "F1"} · {driver.number ? `#${driver.number}` : "NO TBC"}</span>
             <h2>{driver.name}</h2>
             <p>{driver.team || "Team to be confirmed"}</p>
@@ -70,6 +72,7 @@ export function TeamsExplorer({ teams }: { teams: GridTeam[] }) {
       <div className="directory-grid">
         {visible.map((team) => (
           <article className="directory-card team-directory-card" key={team.id}>
+            <Crest src={team.image} name={team.name} large />
             <span className="directory-kicker">{team.nationality || "FORMULA 1"} · P{team.position || "—"}</span>
             <h2><a href={`/season/teams/${team.id}`}>{team.name}</a></h2>
             <p>{team.drivers.map((driver) => driver.code || driver.name).join(" · ") || "Drivers to be confirmed"}</p>

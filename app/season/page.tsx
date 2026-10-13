@@ -1,3 +1,4 @@
+import { Crest, Portrait } from "@/components/season/season-media"
 import { ScheduleExplorer } from "@/components/season/schedule-explorer"
 import { SeasonFrame } from "@/components/season/season-frame"
 import {
@@ -26,11 +27,14 @@ export default async function SeasonPage() {
     .filter((race) => raceStartTimestamp(race) >= now)
     .sort((a, b) => raceStartTimestamp(a) - raceStartTimestamp(b))[0]
   const podium = data.latestRace?.Results?.slice(0, 3) ?? []
+  const portraitById = new Map(data.gridDrivers.map((driver) => [driver.id, driver.image]))
+  const crestById = new Map(data.gridTeams.map((team) => [team.id, team.image]))
   const rows = data.races.map((race) => ({
     round: race.round || "—",
     name: race.raceName || "Grand Prix",
     place: placeName(race),
     circuit: race.Circuit?.circuitName || "",
+    image: race.image || "",
     when: formatKigaliDateTime(race),
     qualifying: race.Qualifying?.date ? formatKigaliDateTime(race.Qualifying) : "",
     status: completedRounds.has(race.round || "") ? "completed" as const : "upcoming" as const,
@@ -45,6 +49,7 @@ export default async function SeasonPage() {
       kicker="THE CHAMPIONSHIP, FROM KIGALI"
       title={`The ${data.season} Formula 1 season.`}
       dek="The full calendar, the next Grand Prix and the latest podium — with every race time in Kigali."
+      heroImage={nextRace?.image || data.latestRace?.image || "/images/rwanda-racing-hero.webp"}
       crumbs={[{ label: "Home", href: "/" }, { label: `${data.season} season` }]}
       jsonLd={[
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: `${data.season} F1 season`, path: PATH }]),
@@ -59,7 +64,8 @@ export default async function SeasonPage() {
       ]}
     >
       <section className="season-feature-grid" aria-label="Next race and latest result">
-        <article className="next-race-card">
+        <article className={`next-race-card${nextRace?.image ? " next-race-card-photo" : ""}`}>
+          {nextRace?.image ? <img className="card-photo" src={nextRace.image} alt="" /> : null}
           <p className="label label-acid">NEXT GRAND PRIX</p>
           {nextRace ? (
             <>
@@ -76,7 +82,8 @@ export default async function SeasonPage() {
             </>
           )}
         </article>
-        <article className="latest-result-card">
+        <article className={`latest-result-card${data.latestRace?.image ? " latest-result-card-photo" : ""}`}>
+          {data.latestRace?.image ? <img className="card-photo" src={data.latestRace.image} alt="" /> : null}
           <p className="label">LATEST RACE RESULT</p>
           {data.latestRace ? (
             <>
@@ -87,12 +94,14 @@ export default async function SeasonPage() {
                 {podium.map((result, index) => (
                   <li key={`${result.position || index}-${result.Driver?.driverId || "driver"}`}>
                     <span className="podium-position">{result.position || String(index + 1)}</span>
+                    <Portrait src={portraitById.get(result.Driver?.driverId || "")} name={result.Driver?.code || personName(result.Driver)} />
                     {result.Driver?.driverId ? (
                       <a href={`/season/drivers/${result.Driver.driverId}`}>{personName(result.Driver)}</a>
                     ) : (
                       <span>{personName(result.Driver) || "Driver"}</span>
                     )}
                     <small>
+                      <Crest src={crestById.get(result.Constructor?.constructorId || "")} name={result.Constructor?.name || "Team"} />
                       {result.Constructor?.constructorId ? (
                         <a href={`/season/teams/${result.Constructor.constructorId}`}>{result.Constructor.name}</a>
                       ) : result.Constructor?.name || "Team"}

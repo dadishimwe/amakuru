@@ -22,6 +22,7 @@ export default async function TeamsPage() {
       kicker="THE CONSTRUCTORS"
       title={`${data.season} teams.`}
       dek="Browse the constructors, open a team page, or go straight to the team's official website."
+      heroImage="/images/rwanda-racing-hero.webp"
       crumbs={[{ label: "Home", href: "/" }, { label: "Season", href: "/season" }, { label: "Teams" }]}
       jsonLd={[
         breadcrumbJsonLd([

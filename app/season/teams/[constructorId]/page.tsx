@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { Crest, Portrait } from "@/components/season/season-media"
 import { SeasonFrame } from "@/components/season/season-frame"
 import { formatPoints, getF1SeasonData, teamResults } from "@/lib/f1-season"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
@@ -40,6 +41,7 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
       kicker={team.nationality ? team.nationality.toUpperCase() : "CONSTRUCTOR"}
       title={team.name}
       dek={`Championship P${team.position || "—"} · ${formatPoints(team.points)} points · ${team.wins} wins.`}
+      heroImage="/images/rwanda-racing-hero.webp"
       crumbs={[{ label: "Home", href: "/" }, { label: "Teams", href: "/season/teams" }, { label: team.name }]}
       jsonLd={[
         breadcrumbJsonLd([
@@ -63,6 +65,17 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
         },
       ]}
     >
+      <div className="team-crest-panel">
+        <Crest src={team.image} name={team.name} large />
+        <div className="team-driver-row">
+          {team.drivers.map((driver) => (
+            <a key={driver.id} href={`/season/drivers/${driver.id}`}>
+              <Portrait src={driver.image} name={driver.code || driver.name} />
+              <span>{driver.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
       <div className="profile-facts">
         {team.officialUrl && (
           <a className="official-link" href={team.officialUrl} target="_blank" rel="noreferrer">
@@ -70,9 +83,6 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
           </a>
         )}
         {team.wikipedia && <a href={team.wikipedia} target="_blank" rel="noreferrer">Wikipedia ↗</a>}
-        {team.drivers.map((driver) => (
-          <a key={driver.id} href={`/season/drivers/${driver.id}`}>{driver.name}</a>
-        ))}
       </div>
       <div className="standings-scroll">
         <table className="standings-table">

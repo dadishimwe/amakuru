@@ -76,6 +76,10 @@ function ensureGtag() {
   window.__amakuruGaConfigured = true
 }
 
+function isChampionshipPath(pathname: string) {
+  return pathname === "/season" || pathname.startsWith("/season/")
+}
+
 function sendPageView(pathname: string, referrer: string) {
   window.gtag?.("event", "page_view", {
     page_path: pathname,
@@ -127,20 +131,20 @@ export function GoogleAnalyticsConsent() {
       landingSent.current = true
     }
 
-    // Arrival is always counted. Page-by-page tracking waits for Allow.
-    // Delay the denial so the landing hit is sent before storage is turned off.
-    if (choice === "accepted") return
+    // Arrival is always counted. Championship sections stay counted on every visit.
+    // Other pages wait for Allow. Delay the denial so the landing hit is sent first.
+    if (choice === "accepted" || isChampionshipPath(pathname || "/")) return
     const timer = window.setTimeout(() => {
       if (window.localStorage.getItem(CONSENT_KEY) === "accepted") return
       window.gtag?.("consent", "update", deniedConsent)
     }, 1500)
     return () => window.clearTimeout(timer)
-  }, [choice, isLiveDomain])
+  }, [choice, isLiveDomain, pathname])
 
   useEffect(() => {
-    if (!analyticsReady || choice !== "accepted" || !isLiveDomain || !window.gtag) return
-
     const path = pathname || "/"
+    if (!analyticsReady || !isLiveDomain || !window.gtag) return
+    if (choice !== "accepted" && !isChampionshipPath(path)) return
     const current = `${window.location.origin}${path}`
     if (previousPage.current === current) return
 
@@ -184,7 +188,7 @@ export function GoogleAnalyticsConsent() {
             <p>
               {!isLiveDomain
                 ? "Google Analytics only runs on amakuru.rw. This preview does not send visits to the live property."
-                : "Every visit is counted as soon as you arrive. Allowing Google Analytics also lets us see which pages you read afterward. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice in the footer."}
+                : "Every visit is counted as soon as you arrive, including the championship schedule, results, standings, drivers and teams. Allowing Google Analytics also lets us see the other pages you read afterward. Vercel's cookie-free aggregate metrics remain on. You can change your Google Analytics choice in the footer."}
             </p>
             {isLiveDomain && (
               <>
