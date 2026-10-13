@@ -1,11 +1,11 @@
 {
-  "name": "Amakuru — Rwanda-first news",
-  "short_name": "Amakuru",
-  "description": "Rwanda-first news with credibility scoring, community verification, and multilingual audio summaries.",
+  "name": "Amakuru Motorsport — Formula 1 through a Rwanda lens",
+  "short_name": "Amakuru F1",
+  "description": "Formula 1 news, context and the road to Rwanda's African Grand Prix.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5F4F0",
-  "theme_color": "#111111",
+  "background_color": "#0b1110",
+  "theme_color": "#0b1110",
   "icons": [
     {
       "src": "/apple-icon.png",
