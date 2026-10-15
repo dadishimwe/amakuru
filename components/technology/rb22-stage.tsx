@@ -56,10 +56,12 @@ function Rig({
   progress,
   fit,
   bias,
+  pad,
 }: {
   progress: MutableRefObject<number>
   fit: MutableRefObject<number>
   bias: MutableRefObject<{ x: number; y: number }>
+  pad: MutableRefObject<number>
 }) {
   const { camera } = useThree()
   const from = useMemo(() => new THREE.Vector3(), [])
@@ -80,8 +82,8 @@ function Rig({
     direction.lerpVectors(from, to, smooth).normalize()
     const vertical = THREE.MathUtils.degToRad(camera.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * camera.aspect)
-    // Extra padding so the caption panel never eats half the car.
-    const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * 1.38
+    // Desktop pad ~0.7 fills the frame so the car’s length nearly touches the sides.
+    const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * pad.current
     camera.position.copy(direction.multiplyScalar(distance))
     // Look slightly left and down of the car center so the model sits in the
     // clear space above/right of the bottom-left caption (not under it).
@@ -95,9 +97,11 @@ function Rig({
 function StageCanvas({
   progress,
   bias,
+  pad,
 }: {
   progress: MutableRefObject<number>
   bias: MutableRefObject<{ x: number; y: number }>
+  pad: MutableRefObject<number>
 }) {
   const fit = useRef(2.5)
   const [ready, setReady] = useState(false)
@@ -117,7 +121,7 @@ function StageCanvas({
         <directionalLight position={[-5, 3, -3]} intensity={0.75} color="#ffd24a" />
         <Suspense fallback={null}>
           <Car fit={fit} onReady={markReady} />
-          <Rig progress={progress} fit={fit} bias={bias} />
+          <Rig progress={progress} fit={fit} bias={bias} pad={pad} />
         </Suspense>
       </Canvas>
     </>
@@ -127,7 +131,8 @@ function StageCanvas({
 export function Rb22Stage() {
   const storyRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef(0)
-  const biasRef = useRef({ x: 0.22, y: 0.12 })
+  const biasRef = useRef({ x: 0.18, y: 0.1 })
+  const padRef = useRef(0.7)
   const [progress, setProgress] = useState(0)
   const [pin, setPin] = useState<"before" | "fixed" | "after">("before")
   const [reduced, setReduced] = useState(false)
@@ -143,13 +148,20 @@ export function Rb22Stage() {
 
   useEffect(() => {
     const wide = window.matchMedia("(min-width: 900px)")
-    const applyBias = () => {
-      // Desktop caption sits bottom-left; mobile caption sits under the stage.
-      biasRef.current = wide.matches ? { x: 0.28, y: 0.14 } : { x: 0, y: 0.08 }
+    const applyFrame = () => {
+      // Desktop: fill the frame so the car’s length nearly touches the sides.
+      // Mobile: a little more air so the stage strip does not clip the model.
+      if (wide.matches) {
+        biasRef.current = { x: 0.16, y: 0.1 }
+        padRef.current = 0.68
+      } else {
+        biasRef.current = { x: 0, y: 0.06 }
+        padRef.current = 0.92
+      }
     }
-    applyBias()
-    wide.addEventListener("change", applyBias)
-    return () => wide.removeEventListener("change", applyBias)
+    applyFrame()
+    wide.addEventListener("change", applyFrame)
+    return () => wide.removeEventListener("change", applyFrame)
   }, [])
 
   useEffect(() => {
@@ -204,7 +216,7 @@ export function Rb22Stage() {
       <div className={`rb22-pin is-${reduced ? "before" : pin}`}>
         <div className="rb22-stage">
           <StageError>
-            <StageCanvas progress={progressRef} bias={biasRef} />
+            <StageCanvas progress={progressRef} bias={biasRef} pad={padRef} />
           </StageError>
         </div>
         <div className="rb22-copy">
