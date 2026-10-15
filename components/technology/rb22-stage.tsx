@@ -13,8 +13,20 @@ const POSES: Record<Rb22ViewId, [number, number, number]> = {
   top: [0.04, 1, 0.12],
 }
 
-/** Soft Red Bull racing blue — lighter than ink, still lets the dark livery read. */
-const STAGE_BG = "#1a2f6b"
+/** Soft Red Bull blues — side → front → rear → top as you scroll. */
+const BG_STOPS: Record<Rb22ViewId, string> = {
+  side: "#1a2f6b",
+  front: "#1e3a7a",
+  rear: "#121f4d",
+  top: "#243a72",
+}
+
+type FitState = {
+  radius: number
+  floorY: number
+  spanX: number
+  spanZ: number
+}
 
 class StageError extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
@@ -29,7 +41,26 @@ class StageError extends Component<{ children: ReactNode }, { failed: boolean }>
   }
 }
 
-function Car({ fit, onReady }: { fit: MutableRefObject<number>; onReady: () => void }) {
+function makeRadialTexture(inner: string, mid: string, outer: string) {
+  const size = 256
+  const canvas = document.createElement("canvas")
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return null
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  gradient.addColorStop(0, inner)
+  gradient.addColorStop(0.45, mid)
+  gradient.addColorStop(1, outer)
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, size, size)
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  texture.needsUpdate = true
+  return texture
+}
+
+function Car({ fit, onReady }: { fit: MutableRefObject<FitState>; onReady: () => void }) {
   const gltf = useLoader(GLTFLoader, RB22_MODEL)
   const group = useRef<THREE.Group>(null)
 
@@ -40,8 +71,14 @@ function Car({ fit, onReady }: { fit: MutableRefObject<number>; onReady: () => v
     holder.updateWorldMatrix(true, true)
     const box = new THREE.Box3().setFromObject(holder)
     const center = box.getCenter(new THREE.Vector3())
+    const size = box.getSize(new THREE.Vector3())
     holder.position.copy(center).multiplyScalar(-1)
-    fit.current = box.getBoundingSphere(new THREE.Sphere()).radius
+    fit.current = {
+      radius: box.getBoundingSphere(new THREE.Sphere()).radius,
+      floorY: box.min.y - center.y - 0.01,
+      spanX: size.x,
+      spanZ: size.z,
+    }
     onReady()
   }, [fit, gltf.scene, onReady])
 
@@ -52,6 +89,64 @@ function Car({ fit, onReady }: { fit: MutableRefObject<number>; onReady: () => v
   )
 }
 
+function Ground({ fit }: { fit: MutableRefObject<FitState> }) {
+  const floorTex = useMemo(() => makeRadialTexture("rgba(10,16,40,0.55)", "rgba(10,16,40,0.22)", "rgba(10,16,40,0)"), [])
+  const shadowTex = useMemo(() => makeRadialTexture("rgba(0,0,0,0.5)", "rgba(0,0,0,0.18)", "rgba(0,0,0,0)"), [])
+  const floor = useRef<THREE.Mesh>(null)
+  const shadow = useRef<THREE.Mesh>(null)
+
+  useFrame(() => {
+    const { radius, floorY, spanX, spanZ } = fit.current
+    const floorSize = Math.max(radius * 2.4, 4)
+    if (floor.current) {
+      floor.current.position.y = floorY
+      floor.current.scale.set(floorSize, floorSize, 1)
+    }
+    if (shadow.current) {
+      shadow.current.position.y = floorY + 0.004
+      // Soft oval under the chassis — longer along the car.
+      shadow.current.scale.set(Math.max(spanX * 1.15, radius * 0.55), Math.max(spanZ * 0.95, radius * 1.1), 1)
+    }
+  })
+
+  if (!floorTex || !shadowTex) return null
+
+  return (
+    <group>
+      <mesh ref={floor} rotation={[-Math.PI / 2, 0, 0]} renderOrder={-2}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial map={floorTex} transparent depthWrite={false} />
+      </mesh>
+      <mesh ref={shadow} rotation={[-Math.PI / 2, 0, 0]} renderOrder={-1}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial map={shadowTex} transparent depthWrite={false} />
+      </mesh>
+    </group>
+  )
+}
+
+function Atmosphere({ progress }: { progress: MutableRefObject<number> }) {
+  const { scene, gl } = useThree()
+  const from = useMemo(() => new THREE.Color(), [])
+  const to = useMemo(() => new THREE.Color(), [])
+  const mixed = useMemo(() => new THREE.Color(BG_STOPS.side), [])
+
+  useFrame(() => {
+    const scaled = progress.current * (RB22_VIEWS.length - 1)
+    const index = Math.min(RB22_VIEWS.length - 2, Math.floor(scaled))
+    const blend = scaled - index
+    const smooth = blend * blend * (3 - 2 * blend)
+    from.set(BG_STOPS[RB22_VIEWS[index].id])
+    to.set(BG_STOPS[RB22_VIEWS[index + 1].id])
+    mixed.lerpColors(from, to, smooth)
+    scene.background = mixed
+    const parent = gl.domElement.parentElement
+    if (parent) parent.style.background = `#${mixed.getHexString()}`
+  })
+
+  return null
+}
+
 function Rig({
   progress,
   fit,
@@ -59,7 +154,7 @@ function Rig({
   pad,
 }: {
   progress: MutableRefObject<number>
-  fit: MutableRefObject<number>
+  fit: MutableRefObject<FitState>
   bias: MutableRefObject<{ x: number; y: number }>
   pad: MutableRefObject<number>
 }) {
@@ -70,7 +165,7 @@ function Rig({
   const target = useMemo(() => new THREE.Vector3(), [])
 
   useFrame(() => {
-    const radius = fit.current || 2.5
+    const radius = fit.current.radius || 2.5
     const scaled = progress.current * (RB22_VIEWS.length - 1)
     const index = Math.min(RB22_VIEWS.length - 2, Math.floor(scaled))
     const blend = scaled - index
@@ -82,11 +177,8 @@ function Rig({
     direction.lerpVectors(from, to, smooth).normalize()
     const vertical = THREE.MathUtils.degToRad(camera.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * camera.aspect)
-    // Desktop pad ~0.7 fills the frame so the car’s length nearly touches the sides.
     const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * pad.current
     camera.position.copy(direction.multiplyScalar(distance))
-    // Look slightly left and down of the car center so the model sits in the
-    // clear space above/right of the bottom-left caption (not under it).
     target.set(-bias.current.x * radius, -bias.current.y * radius, 0)
     camera.lookAt(target)
   })
@@ -103,7 +195,7 @@ function StageCanvas({
   bias: MutableRefObject<{ x: number; y: number }>
   pad: MutableRefObject<number>
 }) {
-  const fit = useRef(2.5)
+  const fit = useRef<FitState>({ radius: 2.5, floorY: -0.6, spanX: 1.9, spanZ: 5.4 })
   const [ready, setReady] = useState(false)
   const markReady = useMemo(() => () => setReady(true), [])
 
@@ -115,10 +207,12 @@ function StageCanvas({
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={[STAGE_BG]} />
+        <color attach="background" args={[BG_STOPS.side]} />
         <hemisphereLight args={["#e8eefc", "#0c1635", 1.2]} />
         <directionalLight position={[5, 8, 4]} intensity={2.5} />
         <directionalLight position={[-5, 3, -3]} intensity={0.75} color="#ffd24a" />
+        <Atmosphere progress={progress} />
+        <Ground fit={fit} />
         <Suspense fallback={null}>
           <Car fit={fit} onReady={markReady} />
           <Rig progress={progress} fit={fit} bias={bias} pad={pad} />
@@ -149,8 +243,6 @@ export function Rb22Stage() {
   useEffect(() => {
     const wide = window.matchMedia("(min-width: 900px)")
     const applyFrame = () => {
-      // Desktop: fill the frame so the car’s length nearly touches the sides.
-      // Mobile: a little more air so the stage strip does not clip the model.
       if (wide.matches) {
         biasRef.current = { x: 0.16, y: 0.1 }
         padRef.current = 0.68
