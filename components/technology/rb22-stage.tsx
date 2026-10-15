@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber"
-import { Component, Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react"
+import { Component, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import * as THREE from "three"
 import { RB22_MODEL, RB22_VIEWS, type Rb22ViewId } from "@/lib/rb22-story"
@@ -28,65 +28,62 @@ class StageError extends Component<{ children: ReactNode }, { failed: boolean }>
 
 function Car({ fit, onReady }: { fit: MutableRefObject<number>; onReady: () => void }) {
   const gltf = useLoader(GLTFLoader, RB22_MODEL)
-  const scene = useMemo(() => {
-    const next = gltf.scene.clone(true)
-    const box = new THREE.Box3().setFromObject(next)
+  const group = useRef<THREE.Group>(null)
+
+  useLayoutEffect(() => {
+    const holder = group.current
+    if (!holder) return
+    holder.position.set(0, 0, 0)
+    holder.updateWorldMatrix(true, true)
+    const box = new THREE.Box3().setFromObject(holder)
     const center = box.getCenter(new THREE.Vector3())
-    const size = box.getSize(new THREE.Vector3())
-    next.position.sub(center)
-    fit.current = Math.max(size.x, size.y, size.z)
-    return next
-  }, [fit, gltf.scene])
-
-  useEffect(() => {
+    holder.position.copy(center).multiplyScalar(-1)
+    fit.current = box.getBoundingSphere(new THREE.Sphere()).radius
     onReady()
-  }, [onReady])
+  }, [fit, gltf.scene, onReady])
 
-  return <primitive object={scene} />
+  return (
+    <group ref={group}>
+      <primitive object={gltf.scene} />
+    </group>
+  )
 }
 
 function Rig({
   progress,
   fit,
-  shift,
 }: {
   progress: MutableRefObject<number>
   fit: MutableRefObject<number>
-  shift: MutableRefObject<number>
 }) {
   const { camera } = useThree()
-  const position = useMemo(() => new THREE.Vector3(), [])
-  const target = useMemo(() => new THREE.Vector3(), [])
   const from = useMemo(() => new THREE.Vector3(), [])
   const to = useMemo(() => new THREE.Vector3(), [])
+  const direction = useMemo(() => new THREE.Vector3(), [])
 
   useFrame(() => {
-    const radius = fit.current || 5
+    const radius = fit.current || 2.5
     const scaled = progress.current * (RB22_VIEWS.length - 1)
     const index = Math.min(RB22_VIEWS.length - 2, Math.floor(scaled))
     const blend = scaled - index
     const start = POSES[RB22_VIEWS[index].id]
     const end = POSES[RB22_VIEWS[index + 1].id]
-    from.set(start[0], start[1], start[2]).normalize().multiplyScalar(radius * 0.95)
-    to.set(end[0], end[1], end[2]).normalize().multiplyScalar(radius * 0.95)
+    from.set(start[0], start[1], start[2]).normalize()
+    to.set(end[0], end[1], end[2]).normalize()
     const smooth = blend * blend * (3 - 2 * blend)
-    position.lerpVectors(from, to, smooth)
-    camera.position.copy(position)
-    target.set(-shift.current, 0, 0)
-    camera.lookAt(target)
+    direction.lerpVectors(from, to, smooth).normalize()
+    const vertical = THREE.MathUtils.degToRad(camera.fov)
+    const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * camera.aspect)
+    const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * 1.28
+    camera.position.copy(direction.multiplyScalar(distance))
+    camera.lookAt(0, 0, 0)
   })
 
   return null
 }
 
-function StageCanvas({
-  progress,
-  shift,
-}: {
-  progress: MutableRefObject<number>
-  shift: MutableRefObject<number>
-}) {
-  const fit = useRef(5)
+function StageCanvas({ progress }: { progress: MutableRefObject<number> }) {
+  const fit = useRef(2.5)
   const [ready, setReady] = useState(false)
   const markReady = useMemo(() => () => setReady(true), [])
 
@@ -94,17 +91,17 @@ function StageCanvas({
     <>
       {ready ? null : <p className="rb22-status">Bringing the car into the garage…</p>}
       <Canvas
-        camera={{ position: [6, 1.2, 0.4], fov: 32, near: 0.05, far: 100 }}
+        camera={{ position: [8, 2, 1], fov: 30, near: 0.05, far: 200 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={["#0b1110"]} />
-        <hemisphereLight args={["#f4f3ea", "#101816", 1.15]} />
-        <directionalLight position={[4, 7, 5]} intensity={2.4} />
-        <directionalLight position={[-6, 2, -3]} intensity={0.85} color="#9fd7ef" />
+        <color attach="background" args={["#e7e6dc"]} />
+        <hemisphereLight args={["#f7f6f1", "#c5c2b6", 1.35]} />
+        <directionalLight position={[6, 8, 4]} intensity={2.6} />
+        <directionalLight position={[-5, 3, -4]} intensity={0.9} />
         <Suspense fallback={null}>
           <Car fit={fit} onReady={markReady} />
-          <Rig progress={progress} fit={fit} shift={shift} />
+          <Rig progress={progress} fit={fit} />
         </Suspense>
       </Canvas>
     </>
@@ -114,7 +111,6 @@ function StageCanvas({
 export function Rb22Stage() {
   const storyRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef(0)
-  const shiftRef = useRef(0)
   const [progress, setProgress] = useState(0)
   const [pin, setPin] = useState<"before" | "fixed" | "after">("before")
   const [reduced, setReduced] = useState(false)
@@ -126,16 +122,6 @@ export function Rb22Stage() {
     apply()
     media.addEventListener("change", apply)
     return () => media.removeEventListener("change", apply)
-  }, [])
-
-  useEffect(() => {
-    const wide = window.matchMedia("(min-width: 900px)")
-    const applyShift = () => {
-      shiftRef.current = wide.matches ? 1.15 : 0
-    }
-    applyShift()
-    wide.addEventListener("change", applyShift)
-    return () => wide.removeEventListener("change", applyShift)
   }, [])
 
   useEffect(() => {
@@ -190,7 +176,7 @@ export function Rb22Stage() {
       <div className={`rb22-pin is-${reduced ? "before" : pin}`}>
         <div className="rb22-stage">
           <StageError>
-            <StageCanvas progress={progressRef} shift={shiftRef} />
+            <StageCanvas progress={progressRef} />
           </StageError>
         </div>
         <div className="rb22-copy">
