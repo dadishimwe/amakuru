@@ -6,7 +6,7 @@ import { SITE_NAME, SITE_URL } from "@/lib/site"
 
 const PATH = "/technology"
 const TITLE = "2026 Formula 1 technology explained | Amakuru Motorsport"
-const DESCRIPTION = "Minimal, source-linked Formula 1 explainers for 2026 car design, hybrid power units and tyres, with original technical diagrams."
+const DESCRIPTION = "Source-linked Formula 1 explainers for 2026 car design, the hybrid power unit and tyres, plus a walk-around of a fan-made Red Bull RB22."
 
 export const metadata: Metadata = seasonMetadata(TITLE, DESCRIPTION, PATH)
 
@@ -22,12 +22,20 @@ export default function TechnologyPage() {
       publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
       mainEntity: {
         "@type": "ItemList",
-        itemListElement: TECH_TOPICS.map((topic, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: topic.title,
-          url: `${SITE_URL}${PATH}/${topic.slug}`,
-        })),
+        itemListElement: [
+          ...TECH_TOPICS.map((topic, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: topic.title,
+            url: `${SITE_URL}${PATH}/${topic.slug}`,
+          })),
+          {
+            "@type": "ListItem",
+            position: TECH_TOPICS.length + 1,
+            name: "Walk around the 2026 Red Bull RB22",
+            url: `${SITE_URL}${PATH}/rb22`,
+          },
+        ],
       },
     },
   ]
@@ -37,7 +45,7 @@ export default function TechnologyPage() {
       kicker="AM / TECHNICAL NOTES"
       label="2026 RULES · PLAIN LANGUAGE"
       title="The machinery, made clear."
-      dek="Three compact explainers on the car, the hybrid system and the tyres. Each drawing is original, unbranded and labelled as a schematic."
+      dek="Three original schematics, plus a walk-around of Dave’s CC BY model of the 2026 Red Bull RB22. The drawings are unbranded. The model is not."
       crumbs={[{ label: "Home", href: "/" }, { label: "Technology" }]}
       jsonLd={jsonLd}
     >
@@ -52,8 +60,15 @@ export default function TechnologyPage() {
             <span className="technology-card-link">Read the explainer <span aria-hidden="true">→</span></span>
           </a>
         ))}
+        <a className="technology-card technology-card-model" href="/technology/rb22">
+          <span className="coverage-tag">04 · A FAN MODEL</span>
+          <figure><span>RB22</span></figure>
+          <h2>Walk around a 2026 Red Bull.</h2>
+          <p>Dave’s model stays on screen. Scrolling turns the camera from the side, to the nose, to the tail, then overhead.</p>
+          <span className="technology-card-link">Open the walk-around <span aria-hidden="true">→</span></span>
+        </a>
       </div>
-      <p className="article-source-note">The illustrations are Amakuru schematics, not official Formula 1 technical drawings, CAD, component layouts or scale models.</p>
+      <p className="article-source-note">The illustrations are Amakuru schematics, not official Formula 1 technical drawings. The RB22 viewer is a separate fan model by Dave, used under CC BY 4.0.</p>
     </ArticleFrame>
   )
 }

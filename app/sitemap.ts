@@ -25,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
+    { url: `${SITE_URL}/technology/rb22`, lastModified, changeFrequency: "monthly", priority: 0.6 },
     ...circuitIds.map((id) => ({
       url: `${SITE_URL}/circuits/${id}`,
       lastModified,
