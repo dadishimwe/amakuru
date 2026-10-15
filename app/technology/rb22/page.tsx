@@ -1,14 +1,6 @@
 import type { Metadata } from "next"
-import dynamic from "next/dynamic"
 import { SiteFooter, SiteNavigation } from "@/components/site-chrome"
-
-const Rb22Stage = dynamic(
-  () => import("@/components/technology/rb22-stage").then((mod) => mod.Rb22Stage),
-  {
-    ssr: false,
-    loading: () => <div className="rb22-loading">Bringing the car into the garage…</div>,
-  },
-)
+import { Rb22StageLoader } from "@/components/technology/rb22-stage-loader"
 import { RB22_CREDIT, RB22_VIEWS } from "@/lib/rb22-story"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
 import { SITE_NAME, SITE_URL } from "@/lib/site"
@@ -61,7 +53,7 @@ export default function Rb22Page() {
             The car stays in view. Scrolling turns it from the side, to the nose, to the tail, then overhead. It is Dave’s model of the RB22, shared under Creative Commons. It is not an official Red Bull drawing, and it is not the unbranded schematic on the car-design page.
           </p>
         </header>
-        <Rb22Stage />
+        <Rb22StageLoader />
         <section className="rb22-after">
           <h2>What the four views are for</h2>
           <div className="rb22-notes">
