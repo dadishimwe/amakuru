@@ -1,7 +1,8 @@
 import type { CSSProperties, ReactNode } from "react"
 import { SeasonSubnav } from "@/components/season/season-subnav"
+import { ImageCredits } from "@/components/season/image-credits"
 import { SiteFooter, SiteNavigation } from "@/components/site-chrome"
-import { formatUpdateTime } from "@/lib/f1-season"
+import { formatUpdateTime, type ImageCredit } from "@/lib/f1-season"
 
 export function SeasonFrame({
   current,
@@ -16,6 +17,7 @@ export function SeasonFrame({
   heroAlt,
   accent,
   mark,
+  imageCredits,
   children,
 }: {
   current: string
@@ -30,6 +32,7 @@ export function SeasonFrame({
   heroAlt?: string
   accent?: string
   mark?: string
+  imageCredits?: Array<ImageCredit | null | undefined>
   children: ReactNode
 }) {
   return (
@@ -76,9 +79,10 @@ export function SeasonFrame({
           <aside className="season-attribution">
             <span className="coverage-tag">DATA & TERMS</span>
             <p>
-              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Driver portraits, team crests and circuit images come from Wikimedia and remain the property of their owners. This independent site is not affiliated with Formula 1, the FIA, or the teams linked from these pages.
+              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Driver portraits and circuit images are used only when their Wikimedia Commons reuse licence is verified; creators and file-level licences are listed below. Team marks are represented with plain text, not copied logos.
             </p>
             <p>Times are shown in Kigali time (CAT, UTC+2). Data can lag the official classification, so check the official event schedule before travel.</p>
+            <ImageCredits items={imageCredits} />
           </aside>
         </div>
       </main>

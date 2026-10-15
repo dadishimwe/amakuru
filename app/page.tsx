@@ -1,8 +1,15 @@
+import type { CSSProperties } from "react"
+import { NewsCards } from "@/components/news/news-cards"
+import { ImageCredits } from "@/components/season/image-credits"
 import { SeasonSubnav } from "@/components/season/season-subnav"
 import { BrandMark, SiteFooter, SiteNavigation } from "@/components/site-chrome"
 import { Crest, Portrait } from "@/components/season/season-media"
 import { formatPoints, getF1SeasonData, type F1SeasonData } from "@/lib/f1-season"
+import { getF1News } from "@/lib/f1-news"
+import { teamAccent } from "@/lib/team-colors"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site"
+
+export const revalidate = 900
 
 const FIA_ANNOUNCEMENT =
   "https://api.fia.com/news/formula-1-returns-africa-10-year-agreement-race-rwanda"
@@ -25,12 +32,18 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
 }
 
 export default async function AmakuruPage() {
-  let season: F1SeasonData | null = null
-  try {
-    season = await getF1SeasonData()
-  } catch {
-    season = null
+  const [season, news] = await Promise.all([
+    getF1SeasonData().catch((): F1SeasonData | null => null),
+    getF1News(18),
+  ])
+  const latestHeadlines = news.slice(0, 2)
+  const recentImage = news.find((item) => item.imageUrl && Date.now() - Date.parse(item.publishedAt) < 7 * 24 * 60 * 60 * 1000)
+  const homeNewsByUrl = new Map([...latestHeadlines, ...(recentImage ? [recentImage] : [])].map((item) => [item.href, item]))
+  for (const item of news) {
+    if (homeNewsByUrl.size >= 3) break
+    homeNewsByUrl.set(item.href, item)
   }
+  const homeNews = Array.from(homeNewsByUrl.values()).sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
   const homeDrivers = season?.gridDrivers.slice(0, 8) ?? []
   const homeTeams = season?.gridTeams ?? []
   const homePageData = {
@@ -296,10 +309,28 @@ export default async function AmakuruPage() {
           </div>
         </section>
 
+        <section className="section home-news-section" id="latest-news" aria-labelledby="home-news-title">
+          <div className="section-kicker">
+            <span>05</span>
+            <span>FROM THE PADDOCK</span>
+            <span className="kicker-line" />
+            <span>HEADLINES · SOURCE-LINKED</span>
+          </div>
+          <div className="home-news-heading">
+            <div>
+              <p className="label">THE LATEST, NOT THE NOISE</p>
+              <h2 id="home-news-title">While the story moves.</h2>
+            </div>
+            <a className="text-link" href="/news">All F1 news <ArrowUpRight /></a>
+          </div>
+          <NewsCards items={homeNews} variant="compact" />
+          <p className="home-news-note">Headlines are from their original publishers; full reports open at source.</p>
+        </section>
+
         {season && (
           <section className="section grid-strip" id="this-season" aria-labelledby="grid-title">
             <div className="section-kicker">
-              <span>05</span>
+              <span>06</span>
               <span>THIS SEASON</span>
               <span className="kicker-line" />
               <span>FORMULA 1 · {season.season}</span>
@@ -312,7 +343,7 @@ export default async function AmakuruPage() {
             </div>
             <div className="home-driver-row">
               {homeDrivers.map((driver) => (
-                <a key={driver.id} href={`/season/drivers/${driver.id}`}>
+                <a key={driver.id} href={`/season/drivers/${driver.id}`} style={{ "--team-accent": teamAccent(driver.teamId) } as CSSProperties}>
                   <Portrait src={driver.image} name={driver.code || driver.name} large />
                   <strong>{driver.name}</strong>
                   <span>{driver.team || driver.code}</span>
@@ -321,7 +352,7 @@ export default async function AmakuruPage() {
             </div>
             <div className="home-team-row">
               {homeTeams.map((team) => (
-                <a key={team.id} href={`/season/teams/${team.id}`}>
+                <a key={team.id} href={`/season/teams/${team.id}`} style={{ "--team-accent": teamAccent(team.id) } as CSSProperties}>
                   <Crest src={team.image} name={team.name} />
                   <span>{team.name}</span>
                   <small>{formatPoints(team.points)} pts</small>
@@ -331,6 +362,7 @@ export default async function AmakuruPage() {
             <a className="button button-acid" href="/season">
               Open the {season.season} season hub <span>→</span>
             </a>
+            <ImageCredits items={homeDrivers.map((driver) => driver.imageCredit)} />
           </section>
         )}
 

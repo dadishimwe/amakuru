@@ -23,6 +23,7 @@ export default async function StandingsPage() {
       title={`${data.season} standings.`}
       dek="The full drivers' and constructors' championships. Search a name, then open a driver or team for the races behind the points."
       heroImage="/images/rwanda-racing-hero.webp"
+      imageCredits={data.gridDrivers.map((driver) => driver.imageCredit)}
       crumbs={[{ label: "Home", href: "/" }, { label: "Season", href: "/season" }, { label: "Standings" }]}
       jsonLd={breadcrumbJsonLd([
         { name: "Home", path: "/" },

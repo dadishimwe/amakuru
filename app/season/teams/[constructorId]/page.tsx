@@ -59,9 +59,9 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
       kicker={team.nationality ? team.nationality.toUpperCase() : "CONSTRUCTOR"}
       title={team.name}
       dek={`Championship P${team.position || "—"} · ${formatPoints(team.points)} points · ${team.wins} wins.`}
-      heroImage="/images/rwanda-racing-hero.webp"
       accent={teamAccent(team.id)}
       mark={team.position ? `P${team.position}` : ""}
+      imageCredits={team.drivers.map((driver) => driver.imageCredit)}
       crumbs={[{ label: "Home", href: "/" }, { label: "Teams", href: "/season/teams" }, { label: team.name }]}
       jsonLd={[
         breadcrumbJsonLd([

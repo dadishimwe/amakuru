@@ -4,6 +4,7 @@ const SECTIONS = [
   { href: "/season/standings", label: "Standings" },
   { href: "/season/drivers", label: "Drivers" },
   { href: "/season/teams", label: "Teams" },
+  { href: "/circuits", label: "Circuits" },
 ]
 
 export function SeasonSubnav({ current = "" }: { current?: string }) {

@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ driverId:
     `${driver.name} ${data.season} F1 results | Amakuru Motorsport`,
     `${driver.name}${driver.team ? `, ${driver.team}` : ""}: ${data.season} Formula 1 championship position, points and every classified race result.`,
     path,
+    driver.image || undefined,
   )
 }
 
@@ -65,10 +66,9 @@ export default async function DriverPage({ params }: { params: Promise<{ driverI
         { label: "Drivers", href: "/season/drivers" },
         { label: driver.name },
       ]}
-      heroImage={driver.image}
-      heroAlt=""
       accent={teamAccent(driver.teamId)}
       mark={driver.number || driver.code}
+      imageCredits={driver.imageCredit ? [driver.imageCredit] : []}
       jsonLd={[
         breadcrumbJsonLd([
           { name: "Home", path: "/" },

@@ -1,1 +1,15 @@
-{"routes":[{"path":"/","title":"Amakuru Motorsport"},{"path":"/rwanda-f1-grand-prix","title":"Rwanda F1 Grand Prix: What's Confirmed"},{"path":"/season","title":"Formula 1 Season Hub"}]}
+{
+  "routes": [
+    { "path": "/", "title": "Amakuru Motorsport" },
+    { "path": "/rwanda-f1-grand-prix", "title": "Rwanda F1 Grand Prix: What's Confirmed" },
+    { "path": "/road-to-rwanda", "title": "Road to Rwanda" },
+    { "path": "/news", "title": "Latest Formula 1 news" },
+    { "path": "/season", "title": "Formula 1 Season Hub" },
+    { "path": "/season/drivers", "title": "Formula 1 drivers" },
+    { "path": "/season/teams", "title": "Formula 1 teams" },
+    { "path": "/circuits", "title": "Formula 1 circuits" },
+    { "path": "/technology", "title": "Formula 1 technology explainers" },
+    { "path": "/technology/[topic]", "title": "Formula 1 technical explainer" },
+    { "path": "/circuits/[circuitId]", "title": "Formula 1 circuit profile" }
+  ]
+}

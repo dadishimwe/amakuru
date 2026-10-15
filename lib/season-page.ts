@@ -1,11 +1,13 @@
 import type { Metadata } from "next"
 import { SITE_NAME, SITE_URL } from "@/lib/site"
 
-export function seasonMetadata(title: string, description: string, path: string): Metadata {
+export function seasonMetadata(title: string, description: string, path: string, image = `${SITE_URL}/images/rwanda-racing-hero.webp`): Metadata {
   const url = `${SITE_URL}${path}`
+  const isProductionDeployment = process.env.VERCEL_ENV === "production"
   return {
     title: { absolute: title },
     description,
+    robots: { index: isProductionDeployment, follow: isProductionDeployment },
     alternates: { canonical: path },
     openGraph: {
       type: "website",
@@ -14,13 +16,13 @@ export function seasonMetadata(title: string, description: string, path: string)
       locale: "en_RW",
       title,
       description,
-      images: [{ url: `${SITE_URL}/images/rwanda-racing-hero.webp`, alt: "Amakuru Motorsport" }],
+    images: [{ url: image, alt: "Amakuru Motorsport editorial illustration or credited motorsport photograph" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE_URL}/images/rwanda-racing-hero.webp`],
+      images: [image],
     },
   }
 }

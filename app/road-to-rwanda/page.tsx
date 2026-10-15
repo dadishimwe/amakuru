@@ -1,4 +1,6 @@
 import { ArticleFrame } from "@/components/article-frame"
+import { NewsCards } from "@/components/news/news-cards"
+import { getF1News, isRwandaRelatedNews } from "@/lib/f1-news"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
 import { SITE_NAME, SITE_URL } from "@/lib/site"
 
@@ -9,8 +11,10 @@ const FIA_ANNOUNCEMENT = "https://api.fia.com/news/formula-1-returns-africa-10-y
 const FIA_KIGALI_AWARDS = "https://api.fia.com/news/landmark-fia-awards-see-2024-fia-champions-crowned-rwanda"
 
 export const metadata = seasonMetadata(TITLE, DESCRIPTION, PATH)
+export const revalidate = 900
 
-export default function RoadToRwandaPage() {
+export default async function RoadToRwandaPage() {
+  const rwandaStories = (await getF1News(24)).filter(isRwandaRelatedNews).slice(0, 6)
   return (
     <ArticleFrame
       kicker="AM / DESK 001"
@@ -69,6 +73,14 @@ export default function RoadToRwandaPage() {
         <p>
           Amakuru will update this desk when those details are published by the FIA or Formula 1. Until then, the open questions stay open.
         </p>
+      </section>
+
+      <section id="latest-rwanda-coverage">
+        <span className="coverage-tag">HEADLINES · SOURCE FIRST</span>
+        <h2>Latest Rwanda and Africa coverage.</h2>
+        <p>Recent publisher headlines mentioning Rwanda, Kigali or Africa. Open each story at its source; the reporting itself stays with the publisher.</p>
+        <NewsCards items={rwandaStories} variant="compact" />
+        <p className="article-source-note">Feeds are checked every 15 minutes. If no matching headlines are available, the wider <a href="/news">Formula 1 news desk</a> remains up to date.</p>
       </section>
 
       <section className="article-next">

@@ -34,11 +34,16 @@ export function SiteNavigation() {
         { label: "Rwanda's moment", href: "#rwanda" },
         { label: "What comes next", href: "#next" },
         { label: "Rwanda F1 guide", href: "/rwanda-f1-grand-prix" },
+        { label: "Latest news", href: "/news" },
+        { label: "Technology", href: "/technology" },
       ]
     : [
         { label: "Home", href: "/" },
+        { label: "News", href: "/news" },
         { label: "Rwanda F1 guide", href: "/rwanda-f1-grand-prix" },
         { label: "Season hub", href: "/season" },
+        { label: "Technology", href: "/technology" },
+        { label: "Circuits", href: "/circuits" },
       ]
 
   return (
@@ -105,12 +110,16 @@ export function SiteFooter() {
         <span className="brand-section">MOTORSPORT</span>
       </a>
       <p>Formula 1, through a Rwanda lens.</p>
+      <p className="site-disclaimer">This website is unofficial and is not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.</p>
       <div className="footer-links">
         <a href={sectionHref("#the-deal")}>The announcement</a>
         <a href={sectionHref("#rwanda")}>Rwanda's moment</a>
         <a href={sectionHref("#next")}>The road ahead</a>
         <a href="/rwanda-f1-grand-prix">Rwanda F1 guide</a>
         <a href="/road-to-rwanda">Road to Rwanda</a>
+        <a href="/news">Latest news</a>
+        <a href="/technology">Technology</a>
+        <a href="/circuits">Circuits</a>
         <a href="/guides">Guides</a>
         <a href="/season">Schedule</a>
         <a href="/season/results">Results</a>

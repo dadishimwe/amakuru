@@ -27,6 +27,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
       title={`${data.season} race results.`}
       dek="Pick any completed round and read the full classification. Every driver and team links through to their season page."
       heroImage="/images/rwanda-racing-hero.webp"
+      imageCredits={data.classifiedRaces.flatMap((race) => [race.imageCredit, ...race.results.map((result) => result.driverImageCredit)])}
       crumbs={[{ label: "Home", href: "/" }, { label: "Season", href: "/season" }, { label: "Results" }]}
       jsonLd={[
         breadcrumbJsonLd([

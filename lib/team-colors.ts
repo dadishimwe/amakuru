@@ -14,6 +14,6 @@ const TEAM_ACCENTS: Record<string, string> = {
 }
 
 export function teamAccent(constructorId?: string): string {
-  if (!constructorId) return ""
-  return TEAM_ACCENTS[constructorId] || ""
+  if (!constructorId) return "#c9f45a"
+  return TEAM_ACCENTS[constructorId] || "#c9f45a"
 }

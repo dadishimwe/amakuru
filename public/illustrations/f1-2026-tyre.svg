@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+  <title id="title">Amakuru 2026 tyre compounds schematic</title>
+  <desc id="desc">An original slick tyre illustration and five colour swatches for soft, medium, hard, intermediate and wet-weather options.</desc>
+  <defs>
+    <linearGradient id="rubber" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#303835"/><stop offset=".55" stop-color="#101614"/><stop offset="1" stop-color="#39413d"/></linearGradient>
+    <radialGradient id="rim"><stop stop-color="#f2f1e9"/><stop offset=".64" stop-color="#c8cec7"/><stop offset=".66" stop-color="#6e7770"/><stop offset=".72" stop-color="#ecebe3"/><stop offset="1" stop-color="#8c948b"/></radialGradient>
+  </defs>
+  <g transform="translate(82 30)">
+    <ellipse cx="239" cy="245" rx="184" ry="218" fill="url(#rubber)" stroke="#0b1110" stroke-width="10"/>
+    <ellipse cx="239" cy="245" rx="112" ry="143" fill="url(#rim)" stroke="#0b1110" stroke-width="7"/>
+    <ellipse cx="239" cy="245" rx="42" ry="54" fill="#0b1110"/>
+    <ellipse cx="239" cy="245" rx="26" ry="34" fill="#c9f45a"/>
+    <path d="M112 107c46-52 92-76 127-76m127 76c-43-49-84-73-127-76M88 176c-27 46-31 88-29 119m360-119c26 44 30 89 28 119M112 385c36 42 77 68 127 77m127-77c-39 44-80 70-127 77" fill="none" stroke="#707a72" stroke-width="8" stroke-linecap="round"/>
+    <path d="M95 244h28m260 0h28" stroke="#c9f45a" stroke-width="8"/>
+  </g>
+  <g transform="translate(530 91)" font-family="Arial,sans-serif">
+    <text x="0" y="0" fill="#0b1110" font-size="20" font-weight="700" letter-spacing="1.6">DRY-WEATHER SLICKS</text>
+    <g transform="translate(0 32)">
+      <rect width="82" height="56" rx="8" fill="#e10600"/><rect x="99" width="82" height="56" rx="8" fill="#f0ce48"/><rect x="198" width="82" height="56" rx="8" fill="#fff" stroke="#c8cec7" stroke-width="2"/>
+      <text x="41" y="82" text-anchor="middle" fill="#0b1110" font-size="13" font-weight="700">SOFT</text><text x="140" y="82" text-anchor="middle" fill="#0b1110" font-size="13" font-weight="700">MEDIUM</text><text x="239" y="82" text-anchor="middle" fill="#0b1110" font-size="13" font-weight="700">HARD</text>
+    </g>
+    <text x="0" y="158" fill="#737a73" font-size="14">Event selection from the C1–C5 range</text>
+    <text x="0" y="221" fill="#0b1110" font-size="20" font-weight="700" letter-spacing="1.6">WET-WEATHER OPTIONS</text>
+    <g transform="translate(0 249)">
+      <rect width="82" height="56" rx="8" fill="#31a66a"/><rect x="99" width="82" height="56" rx="8" fill="#1676d2"/>
+      <text x="41" y="82" text-anchor="middle" fill="#0b1110" font-size="13" font-weight="700">INTER</text><text x="140" y="82" text-anchor="middle" fill="#0b1110" font-size="13" font-weight="700">FULL WET</text>
+    </g>
+    <text x="0" y="390" fill="#737a73" font-size="13" letter-spacing="1.2">18-INCH RIM · 2026 DIMENSIONS REVISED</text>
+  </g>
+  <text x="82" y="548" fill="#737a73" font-family="Arial,sans-serif" font-size="13" letter-spacing="1.2">SCHEMATIC · COLOUR KEY IS GENERIC · NOT A MANUFACTURER'S PRODUCT RENDER</text>
+</svg>
