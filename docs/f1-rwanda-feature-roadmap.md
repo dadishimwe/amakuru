@@ -1,8 +1,8 @@
 # Amakuru Motorsport: practical next features
 
-The approved homepage remains the front door. The product now adds useful destinations for fans between race weekends without copying Formula 1's official app or adding infrastructure that creates ongoing costs.
+The approved homepage remains the front door. The product adds useful destinations for fans between race weekends without copying Formula 1's official app or adding infrastructure that creates ongoing costs.
 
-## Delivered in the current feature phase
+## Delivered: Season Hub and Rwanda foundations
 
 ### Season Hub
 
@@ -22,10 +22,20 @@ On the live hosts `amakuru.rw` and `www.amakuru.rw`, the first visit is counted 
 
 Google's Realtime report is the place to check whether an arrival and its championship page views are coming in. Use the active-user, page-view, and Events cards for immediate checks; standard acquisition reports can take longer to populate. Google's [Realtime report guidance](https://support.google.com/analytics/answer/9271392?hl=en) describes the report's current activity window and available details.
 
-## Delivered after the season hub
+## Delivered: news, visual identity, circuits and technical notes
 
-- **Road to Rwanda** (`/road-to-rwanda`) is a short desk with three labeled notes: the FIA announcement, reporting on the 2024 FIA Awards in Kigali, and the open questions that still have no date. The homepage links to each label.
-- Evergreen guides live at `/guides`: how a Grand Prix weekend works, what an undercut is, and how championship points work. They are static pages. They do not call the race feed.
+- **F1 news desk** (`/news`) combines headline/link items from BBC Sport and Motorsport.com feeds. It does not republish article text; publisher names and direct story links stay visible. BBC thumbnails are used only when provided by its RSS feed, with BBC attribution. The homepage shows one restrained image at most, and the Rwanda desk filters relevant Rwanda/Africa headlines. RSS and page output are cached for 15 minutes.
+- **Driver and team directories** use current season identities, clean licensed portrait imagery where available, quiet team-colour accents, and typographic team monograms rather than copied team logos. Wikimedia Commons files are shown only when their specific licence is verified; file, artist and licence credits appear on the page. Missing or unsupported images use an accessible fallback.
+- **Circuit profiles** (`/circuits`) link from the calendar and results, show a credited track-layout or venue image when a reusable file is available, and avoid inventing lap length, corner count or layout details when the source does not provide them.
+- **2026 technical notes** (`/technology`) cover car design, the hybrid power unit and tyres using original, unbranded transparent schematics, a few key figures, and direct Formula 1/FIA/Pirelli sources. The diagrams are explanatory, not official drawings or scale models.
+- Route-specific metadata, structured data, sitemap entries and internal navigation cover these pages. Headlines and structured data point to original publishers; Amakuru does not claim to be an official F1 news source.
+
+A possible next editorial phase is to compare selected cars or technical eras from past seasons using official regulations and appropriately licensed/reference-only imagery. Keep each comparison concise, dated and source-linked; avoid copying technical drawings or introducing a database.
+
+## Delivered: editorial guides and Road to Rwanda
+
+- **Road to Rwanda** (`/road-to-rwanda`) is a short desk with source-labelled context and open questions; it now also surfaces relevant Rwanda/Africa headlines from the publisher feeds.
+- Evergreen guides live at `/guides`: how a Grand Prix weekend works, what an undercut is, and how championship points work. They are static pages and do not call the race feed.
 - Live telemetry stays out. A weekend guide describes the shape of a round and points readers at the cached Kigali schedule.
 
 ## What to defer

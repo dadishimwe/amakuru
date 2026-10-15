@@ -23,6 +23,14 @@ export type F1Constructor = {
   nationality?: string
 }
 
+export type ImageCredit = {
+  fileName: string
+  sourceUrl: string
+  artist: string
+  license: string
+  licenseUrl: string
+}
+
 export type F1Result = {
   number?: string
   position?: string
@@ -43,6 +51,7 @@ export type F1Race = {
   time?: string
   url?: string
   image?: string
+  imageCredit?: ImageCredit | null
   Circuit?: {
     circuitId?: string
     circuitName?: string
@@ -83,6 +92,7 @@ export type ClassifiedResult = {
   points: string
   status: string
   driverImage: string
+  driverImageCredit?: ImageCredit | null
   teamImage: string
 }
 
@@ -91,7 +101,9 @@ export type ClassifiedRace = {
   name: string
   place: string
   circuit: string
+  circuitId: string
   circuitImage: string
+  imageCredit?: ImageCredit | null
   when: string
   results: ClassifiedResult[]
 }
@@ -110,6 +122,7 @@ export type GridDriver = {
   position: string
   wins: string
   image: string
+  imageCredit?: ImageCredit | null
 }
 
 export type GridTeam = {
@@ -123,7 +136,7 @@ export type GridTeam = {
   position: string
   wins: string
   image: string
-  drivers: Array<{ id: string; name: string; code: string; number: string; image: string }>
+  drivers: Array<{ id: string; name: string; code: string; number: string; image: string; imageCredit?: ImageCredit | null }>
 }
 
 type JolpicaPayload = {
@@ -218,7 +231,7 @@ function classifiedResult(result: F1Result, index: number): ClassifiedResult {
     driver: personName(result.Driver) || "Driver",
     code: result.Driver?.code || "",
     teamId: result.Constructor?.constructorId || "",
-    team: result.Constructor?.name || "Team",
+    team: teamDisplayName(result.Constructor?.constructorId, result.Constructor?.name) || "Team",
     grid: result.grid || "—",
     laps: result.laps || "—",
     time: result.Time?.time || result.status || "—",
@@ -245,6 +258,112 @@ function wikiKey(title: string): string {
   return title.replace(/_/g, " ").trim().toLowerCase()
 }
 
+const TEAM_DISPLAY_NAMES: Record<string, string> = {
+  alpine: "Alpine",
+  aston_martin: "Aston Martin",
+  audi: "Audi",
+  cadillac: "Cadillac",
+  ferrari: "Ferrari",
+  haas: "Haas F1 Team",
+  mclaren: "McLaren",
+  mercedes: "Mercedes",
+  rb: "Racing Bulls",
+  red_bull: "Red Bull Racing",
+  williams: "Williams",
+}
+
+export function teamDisplayName(id?: string, fallback?: string): string {
+  return (id && TEAM_DISPLAY_NAMES[id]) || fallback || ""
+}
+
+type WikiImageAsset = { url: string; fileName: string; credit: ImageCredit }
+
+function commonsFileName(rawUrl: string): string {
+  try {
+    const path = new URL(rawUrl).pathname
+    const marker = "/wikipedia/commons/"
+    const index = path.indexOf(marker)
+    if (index < 0) return ""
+    const parts = path.slice(index + marker.length).split("/").filter(Boolean)
+    const encoded = parts[0] === "thumb" ? parts[3] : parts.at(-1)
+    return encoded ? decodeURIComponent(encoded).replace(/_/g, " ") : ""
+  } catch {
+    return ""
+  }
+}
+
+function plainText(value?: string): string {
+  return (value || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => {
+      try { return String.fromCodePoint(parseInt(code, 16)) } catch { return "" }
+    })
+    .replace(/&#(\d+);/g, (_, code: string) => {
+      try { return String.fromCodePoint(Number(code)) } catch { return "" }
+    })
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function reusableImageLicense(label: string): boolean {
+  return /^(cc0\b|public domain\b|pd\b|gfdl\b)/i.test(label) || /^cc by(?:-sa)?\s+(?:\d|international)/i.test(label)
+}
+
+async function commonsCredits(fileNames: string[]): Promise<Map<string, ImageCredit>> {
+  const unique = Array.from(new Set(fileNames.filter(Boolean)))
+  const credits = new Map<string, ImageCredit>()
+  for (let offset = 0; offset < unique.length; offset += 50) {
+    const chunk = unique.slice(offset, offset + 50)
+    const params = new URLSearchParams({
+      action: "query",
+      format: "json",
+      prop: "imageinfo",
+      iiprop: "url|extmetadata",
+      titles: chunk.map((name) => `File:${name.replace(/ /g, "_")}`).join("|"),
+    })
+    try {
+      const response = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`, {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "AmakuruMotorsport/1.0 (https://www.amakuru.rw; image attribution lookup)",
+        },
+        next: { revalidate: JOLPICA_REFRESH_SECONDS },
+      })
+      if (!response.ok) continue
+      const body = await response.json() as {
+        query?: { pages?: Record<string, { title?: string; imageinfo?: Array<{ descriptionurl?: string; extmetadata?: Record<string, { value?: string }> }> }> }
+      }
+      for (const page of Object.values(body.query?.pages ?? {})) {
+        const info = page.imageinfo?.[0]
+        const metadata = info?.extmetadata ?? {}
+        const license = plainText(metadata.LicenseShortName?.value)
+        const sourceUrl = info?.descriptionurl || ""
+        if (!sourceUrl || !reusableImageLicense(license)) continue
+        const artist = plainText(metadata.Artist?.value || metadata.Attribution?.value || metadata.Credit?.value)
+        const noAttribution = /^(cc0\b|public domain\b|pd\b)/i.test(license)
+        if (!artist && !noAttribution) continue
+        const fileName = (page.title || "").replace(/^File:/i, "")
+        credits.set(wikiKey(fileName), {
+          fileName,
+          sourceUrl,
+          artist: artist || "Public-domain image",
+          license,
+          licenseUrl: plainText(metadata.LicenseUrl?.value),
+        })
+      }
+    } catch {
+      continue
+    }
+  }
+  return credits
+}
+
 function wikiImage(original: string, thumb: string): string {
   const raw = thumb || original
   if (!raw) return ""
@@ -253,13 +372,13 @@ function wikiImage(original: string, thumb: string): string {
   return /\/\d+px-/.test(path) ? path.replace(/\/\d+px-/, "/960px-") : path
 }
 
-async function wikiThumbnails(titles: string[]): Promise<Map<string, string>> {
+async function wikiThumbnails(titles: string[]): Promise<Map<string, WikiImageAsset>> {
   const unique = new Map<string, string>()
   for (const title of titles) {
     const key = wikiKey(title)
     if (key && !unique.has(key)) unique.set(key, title)
   }
-  const images = new Map<string, string>()
+  const images = new Map<string, { url: string; fileName: string }>()
   const queue = [...unique.entries()]
   async function worker() {
     while (queue.length > 0) {
@@ -277,14 +396,21 @@ async function wikiThumbnails(titles: string[]): Promise<Map<string, string>> {
         if (!response.ok) continue
         const body = (await response.json()) as { thumbnail?: { source?: string }; originalimage?: { source?: string } }
         const source = wikiImage(body.originalimage?.source || "", body.thumbnail?.source || "")
-        if (source) images.set(key, source)
+        const fileName = commonsFileName(source)
+        if (source && fileName) images.set(key, { url: source, fileName })
       } catch {
         continue
       }
     }
   }
   await Promise.all(Array.from({ length: 6 }, () => worker()))
-  return images
+  const verifiedCredits = await commonsCredits(Array.from(images.values(), (image) => image.fileName))
+  const verified = new Map<string, WikiImageAsset>()
+  for (const [key, image] of images) {
+    const credit = verifiedCredits.get(wikiKey(image.fileName))
+    if (credit) verified.set(key, { ...image, credit })
+  }
+  return verified
 }
 
 export async function getF1SeasonData(): Promise<F1SeasonData> {
@@ -313,7 +439,9 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
     name: race.raceName || "Grand Prix",
     place: placeName(race),
     circuit: race.Circuit?.circuitName || "",
+    circuitId: race.Circuit?.circuitId || "",
     circuitImage: "",
+    imageCredit: null,
     when: formatKigaliDateTime(race),
     results: (race.Results ?? []).map(classifiedResult),
   }))
@@ -331,7 +459,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
       nationality: profile?.nationality || row.Driver?.nationality || "",
       dateOfBirth: profile?.dateOfBirth || row.Driver?.dateOfBirth || "",
       wikipedia: profile?.url || row.Driver?.url || "",
-      team: team?.name || "",
+      team: teamDisplayName(team?.constructorId, team?.name),
       teamId: team?.constructorId || "",
       points: row.points || "0",
       position: row.position || "",
@@ -361,7 +489,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
       const official = officialTeamSite(team.constructorId)
       return {
         id: team.constructorId as string,
-        name: team.name || standing?.Constructor?.name || "Team",
+        name: teamDisplayName(team.constructorId, team.name || standing?.Constructor?.name) || "Team",
         nationality: team.nationality || standing?.Constructor?.nationality || "",
         wikipedia: team.url || standing?.Constructor?.url || "",
         officialUrl: official?.href || "",
@@ -376,36 +504,46 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
 
   const thumbs = await wikiThumbnails([
     ...gridDrivers.map((driver) => driver.wikipedia),
-    ...gridTeams.map((team) => team.wikipedia),
     ...scheduleRaces.map((race) => race.Circuit?.url || ""),
     ...completedRaces.map((race) => race.Circuit?.url || ""),
   ].map(wikiTitle))
-  const thumbFor = (url?: string) => {
+  const assetFor = (url?: string) => {
     const title = wikiTitle(url)
-    return title ? thumbs.get(wikiKey(title)) || "" : ""
+    return title ? thumbs.get(wikiKey(title)) : undefined
   }
-  const picturedDrivers = gridDrivers.map((driver) => ({ ...driver, image: thumbFor(driver.wikipedia) }))
-  const driverImageById = new Map(picturedDrivers.map((driver) => [driver.id, driver.image]))
+  const picturedDrivers = gridDrivers.map((driver) => {
+    const asset = assetFor(driver.wikipedia)
+    return { ...driver, image: asset?.url || "", imageCredit: asset?.credit ?? null }
+  })
+  const driverById = new Map(picturedDrivers.map((driver) => [driver.id, driver]))
   const picturedTeams = gridTeams.map((team) => ({
     ...team,
-    image: thumbFor(team.wikipedia),
-    drivers: team.drivers.map((driver) => ({ ...driver, image: driverImageById.get(driver.id) || "" })),
+    image: "",
+    drivers: team.drivers.map((driver) => {
+      const source = driverById.get(driver.id)
+      return { ...driver, image: source?.image || "", imageCredit: source?.imageCredit ?? null }
+    }),
   }))
-  const teamImageById = new Map(picturedTeams.map((team) => [team.id, team.image]))
   const picturedRaces = classifiedRaces.map((race) => {
     const source = completedRaces.find((item) => item.round === race.round)
+    const asset = assetFor(source?.Circuit?.url)
     return {
       ...race,
-      circuitImage: thumbFor(source?.Circuit?.url),
+      circuitImage: asset?.url || "",
+      imageCredit: asset?.credit ?? null,
       results: race.results.map((result) => ({
         ...result,
-        driverImage: driverImageById.get(result.driverId) || "",
-        teamImage: teamImageById.get(result.teamId) || "",
+        driverImage: driverById.get(result.driverId)?.image || "",
+        driverImageCredit: driverById.get(result.driverId)?.imageCredit ?? null,
+        teamImage: "",
       })),
     }
   })
 
-  const picturedSchedule = scheduleRaces.map((race) => ({ ...race, image: thumbFor(race.Circuit?.url) }))
+  const picturedSchedule = scheduleRaces.map((race) => {
+    const asset = assetFor(race.Circuit?.url)
+    return { ...race, image: asset?.url || "", imageCredit: asset?.credit ?? null }
+  })
   const latestRound = completedRaces.at(-1)?.round
 
   return {

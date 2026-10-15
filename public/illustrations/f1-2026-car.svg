@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Amakuru 2026 car design schematic</title>
+  <desc id="desc">An original, unbranded side-view schematic showing a front wing, cockpit, floor, rear wing, and wheels.</desc>
+  <defs>
+    <linearGradient id="body" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#28312d"/><stop offset="1" stop-color="#0b1110"/></linearGradient>
+    <linearGradient id="accent" x1="0" x2="1"><stop stop-color="#2c9fd4"/><stop offset="1" stop-color="#c9f45a"/></linearGradient>
+  </defs>
+  <g fill="none" stroke="#0b1110" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M104 321h193l88-71 146-40 78-75h75l47 63 140 41 85 0 48 42 92 10v24h-54" stroke="url(#accent)" stroke-width="12"/>
+    <path d="M294 321h590" stroke="#0b1110" stroke-width="12"/>
+    <path d="M290 320 354 288l93-29 62 1 64 35 119 18 114-2 59 13" fill="url(#body)" stroke="#0b1110" stroke-width="10"/>
+    <path d="M507 257c22-37 55-75 106-91 25-8 51-7 74 1l31 47-8 17-65-5-50 35" fill="#28312d" stroke="#0b1110" stroke-width="9"/>
+    <path d="M609 164c19-36 53-55 91-52 28 3 50 20 67 49l-18 8c-25-24-50-34-76-28-23 5-39 17-52 36" fill="#e8e7de" stroke="#0b1110" stroke-width="8"/>
+    <path d="M620 161c10-36 34-59 70-65 28-5 53 8 68 33" stroke="#0b1110" stroke-width="9"/>
+    <path d="M673 112v-45m-18 0h97m-756 254h160m731-15h117m-3-59v-91m-12 0h123m-122 12h131" stroke="#0b1110" stroke-width="12"/>
+    <path d="M676 321h91" stroke="#c9f45a" stroke-width="10"/>
+    <circle cx="385" cy="323" r="73" fill="#0b1110" stroke="#0b1110" stroke-width="10"/>
+    <circle cx="385" cy="323" r="38" fill="#e8e7de" stroke="#c9f45a" stroke-width="8"/>
+    <circle cx="909" cy="323" r="73" fill="#0b1110" stroke="#0b1110" stroke-width="10"/>
+    <circle cx="909" cy="323" r="38" fill="#e8e7de" stroke="#c9f45a" stroke-width="8"/>
+    <path d="M82 404h1004" stroke="#aeb6ad" stroke-width="3" stroke-dasharray="8 12"/>
+  </g>
+  <g fill="#0b1110" font-family="Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="1.6">
+    <text x="88" y="120">FRONT ACTIVE AERO</text><text x="88" y="144" fill="#737a73" font-size="13">LOW-DRAG / CORNERING MODES</text>
+    <text x="478" y="78">COMPACT COCKPIT</text>
+    <text x="741" y="120">REAR ACTIVE AERO</text><text x="741" y="144" fill="#737a73" font-size="13">LOWER-DRAG STRAIGHT SETTING</text>
+    <text x="513" y="375">FLOOR + UNDERBODY</text>
+    <text x="93" y="453" fill="#737a73" font-size="13">ILLUSTRATIVE SCHEMATIC · NOT TO SCALE · NO TEAM AFFILIATION</text>
+  </g>
+  <g stroke="#2c9fd4" stroke-width="3" fill="none"><path d="M174 150v61l88 54"/><path d="M839 155v63l55 41"/><path d="M593 363v-47"/></g>
+  <g fill="#2c9fd4"><circle cx="262" cy="265" r="5"/><circle cx="894" cy="259" r="5"/><circle cx="593" cy="316" r="5"/></g>
+</svg>

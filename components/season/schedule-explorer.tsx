@@ -7,6 +7,7 @@ export type ScheduleRow = {
   name: string
   place: string
   circuit: string
+  circuitId: string
   image: string
   when: string
   qualifying: string
@@ -56,16 +57,16 @@ export function ScheduleExplorer({ rows }: { rows: ScheduleRow[] }) {
         <div className="calendar-list">
           {visible.map((row) => (
             <article className="calendar-row" key={row.round}>
-              {row.image ? <img className="calendar-thumb" src={row.image} alt="" /> : <span className="calendar-thumb calendar-thumb-fallback" aria-hidden="true" />}
+              {row.image ? <img className="calendar-thumb" src={row.image} alt="" loading="lazy" decoding="async" /> : <span className="calendar-thumb calendar-thumb-fallback" aria-hidden="true" />}
               <span className="calendar-round">{row.round.padStart(2, "0")}</span>
               <div className="calendar-race-name">
                 <h3>
                   {row.status === "completed" ? <a href={row.resultHref}>{row.name}</a> : row.name}
                 </h3>
-                <p>{row.place}{row.circuit ? ` · ${row.circuit}` : ""}</p>
+                <p>{row.place}{row.circuit ? <> · <a href={row.circuitId ? `/circuits/${row.circuitId}` : "/circuits"}>{row.circuit}</a></> : ""}</p>
               </div>
               <div className="calendar-meta">
-                <time>{row.when} <span>CAT</span></time>
+                <time aria-label={`Race date and start time: ${row.when} Kigali time`}>{row.when} <span>CAT</span></time>
                 <small>{row.status === "completed" ? "Result posted" : row.qualifying ? `Qualifying ${row.qualifying}` : "Upcoming"}</small>
               </div>
             </article>

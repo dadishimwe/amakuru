@@ -3,9 +3,9 @@ import { SITE_URL } from "@/lib/site"
 
 export default function robots(): MetadataRoute.Robots {
   const base = SITE_URL
-  const isPreviewDeployment = process.env.VERCEL_ENV === "preview"
+  const isProductionDeployment = process.env.VERCEL_ENV === "production"
 
-  if (isPreviewDeployment) {
+  if (!isProductionDeployment) {
     return {
       rules: {
         userAgent: "*",

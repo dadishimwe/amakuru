@@ -28,12 +28,12 @@ export function ResultsExplorer({ races, initialRound }: { races: ClassifiedRace
     <section aria-labelledby="results-title">
       {race.circuitImage ? (
         <figure className="race-photo">
-          <img src={race.circuitImage} alt="" />
-          <figcaption>{race.circuit || race.name}</figcaption>
+          <img src={race.circuitImage} alt="" loading="lazy" decoding="async" />
+          <figcaption>{race.circuitId ? <a href={`/circuits/${race.circuitId}`}>{race.circuit || race.name}</a> : race.circuit || race.name}</figcaption>
         </figure>
       ) : null}
       <h2 className="season-section-title" id="results-title">{race.name}</h2>
-      <p className="season-support">{race.place}{race.circuit ? ` · ${race.circuit}` : ""} · {race.when}</p>
+      <p className="season-support">{race.place}{race.circuit ? <> · <a href={race.circuitId ? `/circuits/${race.circuitId}` : "/circuits"}>{race.circuit}</a></> : ""} · {race.when}</p>
       <div className="season-toolbar">
         <SeasonSelect
           label="Round"

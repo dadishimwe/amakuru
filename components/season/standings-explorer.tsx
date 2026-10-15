@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { Crest, Portrait } from "@/components/season/season-media"
 import type { ConstructorStanding, DriverStanding } from "@/lib/f1-season"
-import { formatPoints, personName } from "@/lib/f1-season"
+import { formatPoints, personName, teamDisplayName } from "@/lib/f1-season"
 
 export function StandingsExplorer({
   drivers,
@@ -23,13 +23,13 @@ export function StandingsExplorer({
     () => drivers.filter((row) => {
       if (!needle) return true
       const name = personName(row.Driver)
-      const team = row.Constructors?.[0]?.name || ""
+      const team = teamDisplayName(row.Constructors?.[0]?.constructorId, row.Constructors?.[0]?.name)
       return `${name} ${row.Driver?.code || ""} ${team}`.toLowerCase().includes(needle)
     }),
     [drivers, needle],
   )
   const teamRows = useMemo(
-    () => teams.filter((row) => !needle || (row.Constructor?.name || "").toLowerCase().includes(needle)),
+    () => teams.filter((row) => !needle || teamDisplayName(row.Constructor?.constructorId, row.Constructor?.name).toLowerCase().includes(needle)),
     [needle, teams],
   )
 
@@ -48,7 +48,7 @@ export function StandingsExplorer({
               position: row.position || String(index + 1),
               name: personName(row.Driver) || "Driver",
               href: row.Driver?.driverId ? `/season/drivers/${row.Driver.driverId}` : "",
-              detail: row.Constructors?.[0]?.name || "—",
+              detail: teamDisplayName(row.Constructors?.[0]?.constructorId, row.Constructors?.[0]?.name) || "—",
               detailHref: row.Constructors?.[0]?.constructorId ? `/season/teams/${row.Constructors[0].constructorId}` : "",
               extra: row.wins || "0",
               points: row.points,
@@ -63,7 +63,7 @@ export function StandingsExplorer({
             rows={teamRows.map((row, index) => ({
               key: row.Constructor?.constructorId || String(index),
               position: row.position || String(index + 1),
-              name: row.Constructor?.name || "Team",
+              name: teamDisplayName(row.Constructor?.constructorId, row.Constructor?.name) || "Team",
               href: row.Constructor?.constructorId ? `/season/teams/${row.Constructor.constructorId}` : "",
               detail: row.Constructor?.nationality || "—",
               detailHref: "",

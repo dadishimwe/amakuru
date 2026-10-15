@@ -35,6 +35,7 @@ export default async function SeasonPage() {
     name: race.raceName || "Grand Prix",
     place: placeName(race),
     circuit: race.Circuit?.circuitName || "",
+    circuitId: race.Circuit?.circuitId || "",
     image: race.image || "",
     when: formatKigaliDateTime(race),
     qualifying: race.Qualifying?.date ? formatKigaliDateTime(race.Qualifying) : "",
@@ -51,6 +52,10 @@ export default async function SeasonPage() {
       title={`The ${data.season} Formula 1 season.`}
       dek="The full calendar, the next Grand Prix and the latest podium — with every race time in Kigali."
       heroImage={nextRace?.image || data.latestRace?.image || "/images/rwanda-racing-hero.webp"}
+      imageCredits={[
+        ...data.gridDrivers.map((driver) => driver.imageCredit),
+        ...data.races.map((race) => race.imageCredit),
+      ]}
       crumbs={[{ label: "Home", href: "/" }, { label: `${data.season} season` }]}
       jsonLd={[
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: `${data.season} F1 season`, path: PATH }]),
