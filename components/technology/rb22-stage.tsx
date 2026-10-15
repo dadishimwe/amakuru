@@ -7,11 +7,14 @@ import * as THREE from "three"
 import { RB22_MODEL, RB22_VIEWS, type Rb22ViewId } from "@/lib/rb22-story"
 
 const POSES: Record<Rb22ViewId, [number, number, number]> = {
-  side: [1, 0.16, 0.08],
-  front: [0.12, 0.2, 1],
-  rear: [-0.08, 0.26, -1],
-  top: [0.02, 1, 0.34],
+  side: [1, 0.22, 0.06],
+  front: [0.1, 0.28, 1],
+  rear: [-0.06, 0.32, -1],
+  top: [0.04, 1, 0.12],
 }
+
+/** Soft Red Bull racing blue — lighter than ink, still lets the dark livery read. */
+const STAGE_BG = "#1a2f6b"
 
 class StageError extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
@@ -52,14 +55,17 @@ function Car({ fit, onReady }: { fit: MutableRefObject<number>; onReady: () => v
 function Rig({
   progress,
   fit,
+  bias,
 }: {
   progress: MutableRefObject<number>
   fit: MutableRefObject<number>
+  bias: MutableRefObject<{ x: number; y: number }>
 }) {
   const { camera } = useThree()
   const from = useMemo(() => new THREE.Vector3(), [])
   const to = useMemo(() => new THREE.Vector3(), [])
   const direction = useMemo(() => new THREE.Vector3(), [])
+  const target = useMemo(() => new THREE.Vector3(), [])
 
   useFrame(() => {
     const radius = fit.current || 2.5
@@ -74,15 +80,25 @@ function Rig({
     direction.lerpVectors(from, to, smooth).normalize()
     const vertical = THREE.MathUtils.degToRad(camera.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * camera.aspect)
-    const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * 1.28
+    // Extra padding so the caption panel never eats half the car.
+    const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * 1.38
     camera.position.copy(direction.multiplyScalar(distance))
-    camera.lookAt(0, 0, 0)
+    // Look slightly left and down of the car center so the model sits in the
+    // clear space above/right of the bottom-left caption (not under it).
+    target.set(-bias.current.x * radius, -bias.current.y * radius, 0)
+    camera.lookAt(target)
   })
 
   return null
 }
 
-function StageCanvas({ progress }: { progress: MutableRefObject<number> }) {
+function StageCanvas({
+  progress,
+  bias,
+}: {
+  progress: MutableRefObject<number>
+  bias: MutableRefObject<{ x: number; y: number }>
+}) {
   const fit = useRef(2.5)
   const [ready, setReady] = useState(false)
   const markReady = useMemo(() => () => setReady(true), [])
@@ -91,17 +107,17 @@ function StageCanvas({ progress }: { progress: MutableRefObject<number> }) {
     <>
       {ready ? null : <p className="rb22-status">Bringing the car into the garage…</p>}
       <Canvas
-        camera={{ position: [8, 2, 1], fov: 30, near: 0.05, far: 200 }}
+        camera={{ position: [8, 2.2, 1], fov: 30, near: 0.05, far: 200 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={["#e7e6dc"]} />
-        <hemisphereLight args={["#f7f6f1", "#c5c2b6", 1.35]} />
-        <directionalLight position={[6, 8, 4]} intensity={2.6} />
-        <directionalLight position={[-5, 3, -4]} intensity={0.9} />
+        <color attach="background" args={[STAGE_BG]} />
+        <hemisphereLight args={["#e8eefc", "#0c1635", 1.2]} />
+        <directionalLight position={[5, 8, 4]} intensity={2.5} />
+        <directionalLight position={[-5, 3, -3]} intensity={0.75} color="#ffd24a" />
         <Suspense fallback={null}>
           <Car fit={fit} onReady={markReady} />
-          <Rig progress={progress} fit={fit} />
+          <Rig progress={progress} fit={fit} bias={bias} />
         </Suspense>
       </Canvas>
     </>
@@ -111,6 +127,7 @@ function StageCanvas({ progress }: { progress: MutableRefObject<number> }) {
 export function Rb22Stage() {
   const storyRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef(0)
+  const biasRef = useRef({ x: 0.22, y: 0.12 })
   const [progress, setProgress] = useState(0)
   const [pin, setPin] = useState<"before" | "fixed" | "after">("before")
   const [reduced, setReduced] = useState(false)
@@ -122,6 +139,17 @@ export function Rb22Stage() {
     apply()
     media.addEventListener("change", apply)
     return () => media.removeEventListener("change", apply)
+  }, [])
+
+  useEffect(() => {
+    const wide = window.matchMedia("(min-width: 900px)")
+    const applyBias = () => {
+      // Desktop caption sits bottom-left; mobile caption sits under the stage.
+      biasRef.current = wide.matches ? { x: 0.28, y: 0.14 } : { x: 0, y: 0.08 }
+    }
+    applyBias()
+    wide.addEventListener("change", applyBias)
+    return () => wide.removeEventListener("change", applyBias)
   }, [])
 
   useEffect(() => {
@@ -176,7 +204,7 @@ export function Rb22Stage() {
       <div className={`rb22-pin is-${reduced ? "before" : pin}`}>
         <div className="rb22-stage">
           <StageError>
-            <StageCanvas progress={progressRef} />
+            <StageCanvas progress={progressRef} bias={biasRef} />
           </StageError>
         </div>
         <div className="rb22-copy">
