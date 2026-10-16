@@ -1351,3 +1351,131 @@ a.coverage-card { color: inherit; text-decoration: none; }
   .circuit-profile-image img { height: 240px; }
   .portrait-large.portrait-fallback { font-size: 22px; }
 }
+
+
+/* Championship charts: paper panels, team-color lines, keyboard-visible filters. */
+.progression-section { margin-top: 64px; }
+.progression-heading { max-width: 850px; margin: 0 0 22px; }
+.progression-heading .label { margin: 0 0 10px; }
+.progression-heading .season-section-title { margin: 0; }
+.progression-heading .season-support { max-width: 760px; margin: 12px 0 0; }
+.progression-explorer { padding: 20px; border: 1px solid var(--line); background: #fbfaf3; }
+.progression-controls, .race-chart-intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.progression-switch, .progression-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.progression-switch button, .progression-action {
+  min-height: 38px; padding: 0 12px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+  font: 600 9px/1 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.progression-switch button[aria-pressed="true"], .progression-action.is-active { background: var(--acid); border-color: var(--ink); }
+.progression-switch button:hover, .progression-action:hover { transform: translateY(-1px); border-color: var(--ink); }
+.progression-picker { min-width: 0; margin: 17px 0 0; padding: 12px; border: 1px solid var(--line); }
+.progression-picker legend { padding: 0 6px; color: #697169; font: 600 8px/1.4 'Geist Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+.progression-options { display: flex; flex-wrap: wrap; gap: 7px; max-height: 132px; overflow: auto; }
+.progression-option { min-height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px; border: 1px solid transparent; color: #525b54; font-size: 11px; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
+.progression-option:hover { transform: translateY(-1px); border-color: var(--line); background: #fffef8; }
+.progression-option.is-checked { border-color: color-mix(in srgb, var(--team-accent, var(--ink)) 32%, var(--line)); color: var(--ink); background: color-mix(in srgb, var(--team-accent, var(--acid)) 7%, #fbfaf3); }
+.progression-option input { width: 14px; height: 14px; margin: 0; accent-color: var(--team-accent, var(--rwanda-green)); }
+.progression-swatch { width: 15px; height: 3px; display: inline-block; background: var(--series-color, var(--ink)); }
+.progression-chart { min-width: 0; margin-top: 18px; padding: 12px 8px 3px; border: 1px solid rgba(11,17,16,.08); background: #f5f4ec; }
+.progression-chart .recharts-wrapper { outline: none; }
+.progression-chart .recharts-line path { transition: stroke-width .16s ease, opacity .16s ease; }
+.progression-chart .recharts-line:hover path { stroke-width: 4px; }
+.progression-chart .recharts-dot { transition: r .16s ease; }
+.chart-tooltip { min-width: 172px; max-width: 300px; padding: 11px 12px; border: 1px solid var(--ink); background: #fbfaf3; color: var(--ink); box-shadow: 5px 6px 0 rgba(11,17,16,.12); }
+.chart-tooltip > strong { display: block; margin-bottom: 7px; font: 600 9px/1.45 'Geist Mono', monospace; letter-spacing: .04em; }
+.chart-tooltip > span { display: flex; align-items: center; gap: 7px; margin-top: 4px; color: #525b54; font: 500 10px/1.35 'Geist Mono', monospace; }
+.chart-tooltip > span i { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; }
+.chart-tooltip > span b { margin-left: auto; color: var(--ink); font-weight: 700; }
+.progression-note, .chart-warning { margin: 12px 0 0; color: #737a73; font-size: 10px; line-height: 1.6; }
+.chart-warning { color: #8a5719; }
+.race-progress-link { display: inline-flex; align-items: center; gap: 7px; margin: 6px 0 18px; color: var(--rwanda-green); font: 650 10px/1.4 'Geist Mono', monospace; letter-spacing: .05em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; }
+.race-progress-link:hover { color: var(--ink); }
+.race-progress-support { margin: -12px 0 28px; }
+.race-progress-links { margin-top: 22px; }
+.race-lap-explorer { margin-top: 25px; }
+.race-chart-intro { align-items: flex-end; margin-bottom: 18px; }
+.race-chart-intro > div:first-child { max-width: 760px; }
+.race-chart-intro .label { margin-bottom: 10px; }
+.race-chart-intro .season-section-title { margin: 0; font-size: clamp(36px, 5vw, 64px); }
+.race-chart-intro .season-support { margin: 12px 0 0; }
+.race-driver-picker { margin-bottom: 14px; }
+.race-lap-chart { margin-top: 0; }
+.race-classification { margin-top: 32px; }
+.race-classification-head { margin-bottom: 12px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.race-classification-head h3 { margin: 0; font: 400 24px/1.15 Georgia, 'Times New Roman', serif; }
+.race-classification-head p { margin: 0; color: #737a73; font-size: 10px; line-height: 1.5; }
+.race-classification abbr[title] { text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; }
+.race-finish-table td small { color: #7d847c; }
+.race-finish-table td:nth-child(5) { color: #737a73; }
+.season-subnav { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.footer-author { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--rwanda-blue) 60%, transparent); text-underline-offset: 3px; }
+.footer-author:hover { color: var(--rwanda-blue); }
+.crest-fallback {
+  position: relative; display: grid; grid-template-rows: 1fr auto; align-content: center; justify-items: center; gap: 2px;
+  padding: 3px; overflow: hidden; color: color-mix(in srgb, var(--team-accent, var(--ink)) 90%, var(--ink));
+  border: 1px solid color-mix(in srgb, var(--team-accent, var(--ink)) 42%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--team-accent, var(--acid)) 17%, #fbfaf3), #fbfaf3 78%);
+  font-size: 7px; letter-spacing: .03em;
+}
+.crest-bars { height: 12px; display: flex; align-items: flex-end; gap: 2px; }
+.crest-bars i { width: 3px; height: 7px; display: block; background: var(--team-accent, var(--rwanda-green)); }
+.crest-bars i:nth-child(2) { height: 12px; background: color-mix(in srgb, var(--team-accent, var(--rwanda-green)) 58%, var(--rwanda-yellow)); }
+.crest-bars i:nth-child(3) { height: 9px; opacity: .68; }
+.crest-lettermark { font: 700 6px/1 'Geist Mono', monospace; letter-spacing: .04em; }
+.team-directory-card .crest-large.crest-fallback, .team-crest-panel .crest-large.crest-fallback {
+  min-height: 150px; height: auto; padding: 22px; justify-items: start; align-content: center; gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--team-accent, var(--ink)) 32%, var(--line));
+  background: linear-gradient(125deg, color-mix(in srgb, var(--team-accent, var(--acid)) 15%, #fbfaf3), #f5f4ec 78%);
+}
+.team-directory-card .crest-large .crest-bars, .team-crest-panel .crest-large .crest-bars { height: 34px; gap: 5px; }
+.team-directory-card .crest-large .crest-bars i, .team-crest-panel .crest-large .crest-bars i { width: 8px; height: 22px; }
+.team-directory-card .crest-large .crest-bars i:nth-child(2), .team-crest-panel .crest-large .crest-bars i:nth-child(2) { height: 34px; }
+.team-directory-card .crest-large .crest-bars i:nth-child(3), .team-crest-panel .crest-large .crest-bars i:nth-child(3) { height: 27px; }
+.team-directory-card .crest-large .crest-lettermark, .team-crest-panel .crest-large .crest-lettermark { font: 700 clamp(22px, 3vw, 38px)/1 'Geist Mono', monospace; letter-spacing: .08em; }
+.progression-option:focus-within, .progression-action:focus-visible, .progression-switch button:focus-visible, .race-progress-link:focus-visible { outline: 2px solid var(--rwanda-blue); outline-offset: 3px; }
+@media (max-width: 850px) {
+  .season-subnav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .progression-section { margin-top: 48px; }
+  .progression-explorer { padding: 12px; }
+  .progression-controls, .race-chart-intro { align-items: flex-start; flex-direction: column; }
+  .progression-chart { padding: 8px 2px 2px; }
+  .race-chart-intro .season-section-title { font-size: 42px; }
+  .race-classification-head { align-items: flex-start; flex-direction: column; }
+  .race-finish-table td, .race-finish-table th { white-space: nowrap; }
+  .season-subnav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progression-switch button, .progression-action, .progression-option, .progression-chart .recharts-line path, .progression-chart .recharts-dot { transition: none; }
+}
+
+
+/* Public research-paper entry points */
+.technology-card-research figure {
+  grid-template-rows: 1fr auto;
+  justify-items: start;
+  align-items: end;
+  padding: 18px 20px;
+  background: radial-gradient(circle at 90% 12%, rgba(215, 229, 64, .28), transparent 34%), linear-gradient(135deg, #e9e8dc, #fbfaf3);
+}
+.technology-card-research figure span {
+  color: var(--ink);
+  font: 400 clamp(28px, 3vw, 39px)/.92 Georgia, 'Times New Roman', serif;
+  letter-spacing: -.045em;
+}
+.technology-card-research figure small {
+  color: var(--rwanda-green);
+  font: 600 9px/1.4 'Geist Mono', monospace;
+  letter-spacing: .08em;
+}
+.progression-paper-callout {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  background: #fbfaf3;
+}
+.progression-paper-callout .label { margin: 0 0 7px; }
+.progression-paper-callout p:last-child { margin: 0; color: #626a62; font-size: 12px; line-height: 1.75; }
+.progression-paper-callout a { color: var(--rwanda-green); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }

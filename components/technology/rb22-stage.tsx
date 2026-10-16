@@ -175,6 +175,7 @@ function Rig({
     to.set(end[0], end[1], end[2]).normalize()
     const smooth = blend * blend * (3 - 2 * blend)
     direction.lerpVectors(from, to, smooth).normalize()
+    if (!(camera instanceof THREE.PerspectiveCamera)) return
     const vertical = THREE.MathUtils.degToRad(camera.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * camera.aspect)
     const distance = (radius / Math.sin(Math.min(vertical, horizontal) / 2)) * pad.current

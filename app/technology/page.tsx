@@ -6,7 +6,7 @@ import { SITE_NAME, SITE_URL } from "@/lib/site"
 
 const PATH = "/technology"
 const TITLE = "2026 Formula 1 technology explained | Amakuru Motorsport"
-const DESCRIPTION = "Source-linked Formula 1 explainers for 2026 car design, the hybrid power unit and tyres, plus a walk-around of a fan-made Red Bull RB22."
+const DESCRIPTION = "Source-linked Formula 1 explainers for 2026 car design, the hybrid power unit and tyres, a credited RB22 walk-around, and a research paper on leakage-safe race-winner modelling."
 
 export const metadata: Metadata = seasonMetadata(TITLE, DESCRIPTION, PATH)
 
@@ -34,6 +34,12 @@ export default function TechnologyPage() {
             position: TECH_TOPICS.length + 1,
             name: "Walk around the 2026 Red Bull RB22",
             url: `${SITE_URL}${PATH}/rb22`,
+          },
+          {
+            "@type": "ListItem",
+            position: TECH_TOPICS.length + 2,
+            name: "A Leakage-Safe Framework for Formula One Race-Winner Prediction",
+            url: `${SITE_URL}/research/amakuru-f1-winner-prediction.pdf`,
           },
         ],
       },
@@ -66,6 +72,13 @@ export default function TechnologyPage() {
           <h2>Walk around a 2026 Red Bull.</h2>
           <p>Dave’s model stays on screen. Scrolling turns the camera from the side, to the nose, to the tail, then overhead.</p>
           <span className="technology-card-link">Open the walk-around <span aria-hidden="true">→</span></span>
+        </a>
+        <a className="technology-card technology-card-research" href="/research/amakuru-f1-winner-prediction.pdf">
+          <span className="coverage-tag">05 · RESEARCH PAPER</span>
+          <figure aria-hidden="true"><span>F1<br />MODEL STUDY</span><small>CALIBRATION · VALIDATION</small></figure>
+          <h2>Can we estimate an F1 race winner?</h2>
+          <p>By Dadi Ishimwe. A leakage-safe framework for probabilities, model comparisons and chronological testing—without claiming an untested accuracy level.</p>
+          <span className="technology-card-link">Read the eight-page paper · PDF <span aria-hidden="true">→</span></span>
         </a>
       </div>
       <p className="article-source-note">The illustrations are Amakuru schematics, not official Formula 1 technical drawings. The RB22 viewer is a separate fan model by Dave, used under CC BY 4.0.</p>

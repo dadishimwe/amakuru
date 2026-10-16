@@ -1,13 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type CSSProperties } from "react"
+import { teamAccent } from "@/lib/team-colors"
 
-export function Portrait({ src, name, large = false }: { src?: string; name: string; large?: boolean }) {
-  const [failed, setFailed] = useState(false)
-  const mark = (name || "F1").replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase() || "F1"
-  if (!src || failed) return <span className={`portrait portrait-fallback${large ? " portrait-large" : ""}`} aria-hidden="true">{mark}</span>
-  return <img className={`portrait${large ? " portrait-large" : ""}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
-}
+const TEAM_IDS: Array<[string, string]> = [
+  ["mercedes", "mercedes"],
+  ["ferrari", "ferrari"],
+  ["mclaren", "mclaren"],
+  ["red bull", "red_bull"],
+  ["racing bulls", "rb"],
+  ["rb f1", "rb"],
+  ["aston martin", "aston_martin"],
+  ["williams", "williams"],
+  ["alpine", "alpine"],
+  ["haas", "haas"],
+  ["cadillac", "cadillac"],
+  ["audi", "audi"],
+]
 
 function teamMark(name: string): string {
   const value = name.toLowerCase()
@@ -25,9 +34,29 @@ function teamMark(name: string): string {
   return (name || "TEAM").replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase() || "TM"
 }
 
-export function Crest({ src, name, large = false }: { src?: string; name: string; large?: boolean }) {
+function teamIdFor(name: string, explicit?: string): string {
+  if (explicit) return explicit
+  const value = name.toLowerCase()
+  return TEAM_IDS.find(([needle]) => value.includes(needle))?.[1] || ""
+}
+
+export function Portrait({ src, name, large = false }: { src?: string; name: string; large?: boolean }) {
+  const [failed, setFailed] = useState(false)
+  const mark = (name || "F1").replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase() || "F1"
+  if (!src || failed) return <span className={`portrait portrait-fallback${large ? " portrait-large" : ""}`} aria-hidden="true">{mark}</span>
+  return <img className={`portrait${large ? " portrait-large" : ""}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+}
+
+export function Crest({ src, name, large = false, teamId }: { src?: string; name: string; large?: boolean; teamId?: string }) {
   const [failed, setFailed] = useState(false)
   const mark = teamMark(name)
-  if (!src || failed) return <span className={`crest crest-fallback${large ? " crest-large" : ""}`} aria-hidden="true">{mark}</span>
-  return <img className={`crest${large ? " crest-large" : ""}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+  const accent = teamAccent(teamIdFor(name, teamId))
+  const style = { "--team-accent": accent } as CSSProperties
+  if (src && !failed) return <img className={`crest${large ? " crest-large" : ""}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+  return (
+    <span className={`crest crest-fallback${large ? " crest-large" : ""}`} style={style} aria-hidden="true">
+      <span className="crest-bars"><i /><i /><i /></span>
+      <span className="crest-lettermark">{mark}</span>
+    </span>
+  )
 }
