@@ -74,7 +74,7 @@ export function TeamsExplorer({ teams }: { teams: GridTeam[] }) {
       <div className="directory-grid">
         {visible.map((team) => (
           <article className="directory-card team-directory-card" key={team.id} style={{ "--team-accent": teamAccent(team.id) } as CSSProperties}>
-            <span className="team-mark-area"><Crest src={team.image} name={team.name} large /></span>
+            <span className="team-mark-area"><Crest src={team.image} name={team.name} teamId={team.id} large /></span>
             <span className="directory-kicker">{team.nationality || "FORMULA 1"} · P{team.position || "—"}</span>
             <h2><a href={`/season/teams/${team.id}`}>{team.name}</a></h2>
             <p>{team.drivers.map((driver) => driver.code || driver.name).join(" · ") || "Drivers to be confirmed"}</p>

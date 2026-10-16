@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Red Bull editorial crest">
+  <rect width="320" height="200" fill="#eef1fb"/>
+  <rect x="0" y="0" width="12" height="200" fill="#1E41FF"/>
+  <path d="M52 158V42h78c40 0 64 20 64 56s-24 60-66 60H52zm38-34h36c18 0 28-10 28-26s-10-26-28-26H90v52z" fill="#1E41FF"/>
+  <path d="M230 42l48 58-48 58h42l48-58-48-58h-42z" fill="#1E41FF"/>
+  <path d="M48 28h80" stroke="#FFD100" stroke-width="5"/>
+</svg>

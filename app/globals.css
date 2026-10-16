@@ -694,7 +694,18 @@ a.coverage-card { color: inherit; text-decoration: none; }
   background: transparent;
   border: 0;
 }
+.team-directory-card .crest-mark.crest-large,
+.team-crest-panel .crest-mark.crest-large {
+  width: 100%;
+  max-width: 420px;
+  height: 168px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--team-accent, var(--line)) 28%, var(--line));
+  background: #fbfaf3;
+  box-shadow: inset 0 0 0 1px rgba(251, 250, 243, .6);
+}
 .team-crest-panel .crest-large { height: 220px; }
+.team-crest-panel .crest-mark.crest-large { height: 220px; max-width: 520px; }
 .identity-cell { display: inline-flex; align-items: center; gap: 8px; }
 .race-photo { margin: 0 0 8px; }
 .race-photo img { display: block; width: 100%; height: min(420px, 56vw); object-fit: cover; background: var(--ink); }
@@ -986,14 +997,21 @@ a.coverage-card { color: inherit; text-decoration: none; }
   place-items: center start;
   background: linear-gradient(120deg, color-mix(in srgb, var(--team-accent, var(--acid)) 12%, #fbfaf3), #f2f1e9 82%);
 }
-.team-directory-card .crest-large,
-.team-crest-panel .crest-large {
+.team-directory-card .crest-large.crest-fallback,
+.team-crest-panel .crest-large.crest-fallback {
   color: color-mix(in srgb, var(--team-accent, var(--acid)) 86%, var(--ink));
   font: 700 clamp(22px, 4vw, 40px)/1 'Geist Mono', monospace;
   letter-spacing: .08em;
   text-align: left;
 }
-.team-crest-panel .crest-large { min-height: 220px; height: auto; padding: 20px; }
+.team-crest-panel .crest-large.crest-fallback { min-height: 220px; height: auto; padding: 20px; }
+.identity-cell .crest-mark,
+.home-team-row .crest-mark,
+.standings-table .crest-mark {
+  padding: 0;
+  background: #fbfaf3;
+  object-fit: contain;
+}
 .team-driver-row .portrait {
   object-fit: contain;
   background: color-mix(in srgb, var(--team-accent, var(--acid)) 10%, #fbfaf3);

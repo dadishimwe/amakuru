@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Alpine editorial crest">
+  <rect width="320" height="200" fill="#eef4fb"/>
+  <rect x="0" y="0" width="12" height="200" fill="#2173B8"/>
+  <path d="M48 158L96 42h40l48 116h-40l-10-28h-44l-10 28H48zm50-56h36l-18-50-18 50z" fill="#2173B8"/>
+  <path d="M210 158V42h36v84h52v32H210z" fill="#2173B8"/>
+  <path d="M48 28l40 14" stroke="#2173B8" stroke-width="4"/>
+</svg>

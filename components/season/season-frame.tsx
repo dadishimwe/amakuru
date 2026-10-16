@@ -79,7 +79,7 @@ export function SeasonFrame({
           <aside className="season-attribution">
             <span className="coverage-tag">DATA & TERMS</span>
             <p>
-              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Driver portraits and circuit images are used only when their Wikimedia Commons reuse licence is verified; creators and file-level licences are listed below. Team marks are represented with plain text, not copied logos.
+              Calendar, results and standings data by <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noreferrer">Jolpica-F1</a>, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>. Driver portraits and circuit images are used only when their Wikimedia Commons reuse licence is verified; creators and file-level licences are listed below. Team marks are Amakuru editorial crests in each team’s colours, not copied official logos.
             </p>
             <p>Times are shown in Kigali time (CAT, UTC+2). Data can lag the official classification, so check the official event schedule before travel.</p>
             <ImageCredits items={imageCredits} />

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Haas editorial crest">
+  <rect width="320" height="200" fill="#f8f2f1"/>
+  <rect x="0" y="0" width="12" height="200" fill="#B90E0A"/>
+  <path d="M48 158V42h36v44h52V42h36v116h-36V110H84v48H48z" fill="#B90E0A"/>
+  <path d="M210 42h40l28 70 28-70h40L296 158h-40l-18-48-18 48h-40L210 42z" fill="#B90E0A"/>
+</svg>

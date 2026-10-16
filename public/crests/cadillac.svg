@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Cadillac editorial crest">
+  <rect width="320" height="200" fill="#f7f4ec"/>
+  <rect x="0" y="0" width="12" height="200" fill="#C4A35A"/>
+  <path d="M90 42c44 0 72 24 72 58s-28 58-72 58H48V42h42zm0 88c22 0 34-12 34-30S112 70 90 70H86v60h4z" fill="#C4A35A"/>
+  <path d="M188 42h40l28 70 28-70h40L274 158h-40l-18-48-18 48h-40L188 42z" fill="#C4A35A"/>
+  <rect x="48" y="172" width="224" height="4" fill="#C4A35A" opacity=".35"/>
+</svg>

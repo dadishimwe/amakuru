@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Ferrari editorial crest">
+  <rect width="320" height="200" fill="#f7f4ee"/>
+  <rect x="0" y="0" width="12" height="200" fill="#E10600"/>
+  <path d="M48 158V42h86c38 0 62 18 62 52 0 36-26 54-66 54H86v10H48zm38-44h40c18 0 28-8 28-22s-10-22-28-22H86v44z" fill="#E10600"/>
+  <circle cx="268" cy="48" r="18" fill="none" stroke="#E10600" stroke-width="4"/>
+  <path d="M258 48h20M268 38v20" stroke="#E10600" stroke-width="3"/>
+</svg>

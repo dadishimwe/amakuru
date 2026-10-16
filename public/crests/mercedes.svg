@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Mercedes editorial crest">
+  <rect width="320" height="200" fill="#f3f7f6"/>
+  <rect x="0" y="0" width="12" height="200" fill="#00A19C"/>
+  <path d="M52 158L96 42h36l44 116h-38l-8-24H96l-8 24H52zm54-52h28l-14-42-14 42z" fill="#00A19C"/>
+  <path d="M200 42h36l44 116h-38l-8-24h-32l-8 24h-38L200 42zm18 64h28l-14-42-14 42z" fill="#00A19C"/>
+  <circle cx="280" cy="160" r="10" fill="none" stroke="#00A19C" stroke-width="3"/>
+</svg>

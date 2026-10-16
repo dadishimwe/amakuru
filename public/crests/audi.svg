@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Audi editorial crest">
+  <rect width="320" height="200" fill="#f8f2f2"/>
+  <rect x="0" y="0" width="12" height="200" fill="#BB0A30"/>
+  <path d="M48 158L96 42h40l48 116h-40l-10-28h-44l-10 28H48zm50-56h36l-18-50-18 50z" fill="#BB0A30"/>
+  <path d="M210 42h36v44h52V42h36v116h-36v-48h-52v48H210V42z" fill="#BB0A30"/>
+  <g fill="none" stroke="#BB0A30" stroke-width="3" opacity=".55">
+    <circle cx="236" cy="168" r="7"/><circle cx="248" cy="168" r="7"/><circle cx="260" cy="168" r="7"/><circle cx="272" cy="168" r="7"/>
+  </g>
+</svg>

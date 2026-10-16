@@ -70,6 +70,7 @@ export function StandingsExplorer({
               extra: row.wins || "0",
               points: row.points,
               image: teamImages[row.Constructor?.constructorId || ""] || "",
+              teamId: row.Constructor?.constructorId || "",
               kind: "team" as const,
             }))}
           />
@@ -82,7 +83,7 @@ export function StandingsExplorer({
 function StandingTable({
   rows,
 }: {
-  rows: Array<{ key: string; position: string; name: string; href: string; detail: string; detailHref: string; extra: string; points?: string; image: string; kind: "driver" | "team" }>
+  rows: Array<{ key: string; position: string; name: string; href: string; detail: string; detailHref: string; extra: string; points?: string; image: string; teamId?: string; kind: "driver" | "team" }>
 }) {
   if (rows.length === 0) return <p className="season-empty">Nothing matches that search.</p>
   return (
@@ -103,7 +104,7 @@ function StandingTable({
               <td className="standings-position">{row.position.padStart(2, "0")}</td>
               <td className="standings-name">
                 <span className="identity-cell">
-                  {row.kind === "driver" ? <Portrait src={row.image} name={row.name} /> : <Crest src={row.image} name={row.name} />}
+                  {row.kind === "driver" ? <Portrait src={row.image} name={row.name} /> : <Crest src={row.image} name={row.name} teamId={row.teamId} />}
                   {row.href ? <a href={row.href}>{row.name}</a> : row.name}
                 </span>
               </td>

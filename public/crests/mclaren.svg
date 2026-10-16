@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="McLaren editorial crest">
+  <rect width="320" height="200" fill="#f8f5ef"/>
+  <rect x="0" y="0" width="12" height="200" fill="#FF8000"/>
+  <path d="M48 158V42h40l48 78V42h36v116h-40L84 80v78H48z" fill="#FF8000"/>
+  <path d="M210 42h92v28h-54v18h46v26h-46v16h56v28h-94V42z" fill="#FF8000"/>
+  <path d="M48 178h224" stroke="#FF8000" stroke-width="4" opacity=".35"/>
+</svg>

@@ -83,7 +83,7 @@ export function ResultsExplorer({ races, initialRound }: { races: ClassifiedRace
                 </td>
                 <td className="standings-team">
                   <span className="identity-cell">
-                    <Crest src={row.teamImage} name={row.team} />
+                    <Crest src={row.teamImage} name={row.team} teamId={row.teamId} />
                     {row.teamId ? <a href={`/season/teams/${row.teamId}`}>{row.team}</a> : row.team}
                   </span>
                 </td>

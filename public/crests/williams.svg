@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Williams editorial crest">
+  <rect width="320" height="200" fill="#eef6fb"/>
+  <rect x="0" y="0" width="12" height="200" fill="#00A0DE"/>
+  <path d="M40 42h40l28 78 28-78h40L128 158H88L40 42z" fill="#00A0DE"/>
+  <path d="M188 42h36v84h52v32H188V42z" fill="#00A0DE"/>
+  <circle cx="268" cy="58" r="8" fill="#00A0DE"/>
+</svg>

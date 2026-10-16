@@ -50,9 +50,21 @@ export function Portrait({ src, name, large = false }: { src?: string; name: str
 export function Crest({ src, name, large = false, teamId }: { src?: string; name: string; large?: boolean; teamId?: string }) {
   const [failed, setFailed] = useState(false)
   const mark = teamMark(name)
-  const accent = teamAccent(teamIdFor(name, teamId))
+  const resolvedId = teamIdFor(name, teamId)
+  const accent = teamAccent(resolvedId)
   const style = { "--team-accent": accent } as CSSProperties
-  if (src && !failed) return <img className={`crest${large ? " crest-large" : ""}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+  if (src && !failed) {
+    return (
+      <img
+        className={`crest crest-mark${large ? " crest-large" : ""}`}
+        src={src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    )
+  }
   return (
     <span className={`crest crest-fallback${large ? " crest-large" : ""}`} style={style} aria-hidden="true">
       <span className="crest-bars"><i /><i /><i /></span>

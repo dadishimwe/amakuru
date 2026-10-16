@@ -109,7 +109,7 @@ export default async function SeasonPage() {
                       <span>{personName(result.Driver) || "Driver"}</span>
                     )}
                     <small>
-                      <Crest src={crestById.get(result.Constructor?.constructorId || "")} name={result.Constructor?.name || "Team"} />
+                      <Crest src={crestById.get(result.Constructor?.constructorId || "")} name={result.Constructor?.name || "Team"} teamId={result.Constructor?.constructorId} />
                       {result.Constructor?.constructorId ? (
                         <a href={`/season/teams/${result.Constructor.constructorId}`}>{result.Constructor.name}</a>
                       ) : result.Constructor?.name || "Team"}

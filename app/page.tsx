@@ -353,7 +353,7 @@ export default async function AmakuruPage() {
             <div className="home-team-row">
               {homeTeams.map((team) => (
                 <a key={team.id} href={`/season/teams/${team.id}`} style={{ "--team-accent": teamAccent(team.id) } as CSSProperties}>
-                  <Crest src={team.image} name={team.name} />
+                  <Crest src={team.image} name={team.name} teamId={team.id} />
                   <span>{team.name}</span>
                   <small>{formatPoints(team.points)} pts</small>
                 </a>

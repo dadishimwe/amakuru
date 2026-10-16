@@ -1,4 +1,5 @@
 import { officialTeamSite } from "@/lib/f1-official-sites"
+import { teamCrest } from "@/lib/team-crests"
 
 const JOLPICA_BASE = "https://api.jolpi.ca/ergast/f1"
 export const JOLPICA_REFRESH_SECONDS = 6 * 60 * 60
@@ -683,7 +684,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
   const driverById = new Map(picturedDrivers.map((driver) => [driver.id, driver]))
   const picturedTeams = gridTeams.map((team) => ({
     ...team,
-    image: "",
+    image: teamCrest(team.id),
     drivers: team.drivers.map((driver) => {
       const source = driverById.get(driver.id)
       return { ...driver, image: source?.image || "", imageCredit: source?.imageCredit ?? null }
@@ -700,7 +701,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
         ...result,
         driverImage: driverById.get(result.driverId)?.image || "",
         driverImageCredit: driverById.get(result.driverId)?.imageCredit ?? null,
-        teamImage: "",
+        teamImage: teamCrest(result.teamId),
       })),
     }
   })

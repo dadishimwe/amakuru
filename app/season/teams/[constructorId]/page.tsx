@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Crest, Portrait } from "@/components/season/season-media"
@@ -85,8 +86,8 @@ export default async function TeamPage({ params }: { params: Promise<{ construct
         },
       ]}
     >
-      <div className="team-crest-panel">
-        <Crest src={team.image} name={team.name} large />
+      <div className="team-crest-panel" style={{ "--team-accent": teamAccent(team.id) } as CSSProperties}>
+        <Crest src={team.image} name={team.name} teamId={team.id} large />
         <div className="team-driver-row">
           {team.drivers.map((driver) => (
             <a key={driver.id} href={`/season/drivers/${driver.id}`}>
