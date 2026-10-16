@@ -51,6 +51,10 @@ export default async function ProgressionPage() {
           ? <p className="season-empty">The championship feed is unavailable at the moment.</p>
           : <ProgressionExplorer progression={data.progression} />}
       </section>
+      <aside className="progression-paper-callout" aria-label="Winner-model research paper">
+        <p className="label">RESEARCH FOUNDATION</p>
+        <p>The accompanying paper explains leakage-safe winner probabilities, calibration and chronological testing. It is a research framework, not a live prediction. <a href="/research/amakuru-f1-winner-prediction.pdf">Read the paper (PDF) <span aria-hidden="true">→</span></a></p>
+      </aside>
       <div className="season-jump-links"><a href="/season">Back to the season hub</a><a href="/season/standings">Current standings</a></div>
     </SeasonFrame>
   )

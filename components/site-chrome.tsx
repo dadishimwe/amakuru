@@ -125,6 +125,7 @@ export function SiteFooter() {
         <a href="/season/results">Results</a>
         <a href="/season/standings">Standings</a>
         <a href="/season/progression">Progression</a>
+        <a href="/research/amakuru-f1-winner-prediction.pdf">Winner prediction paper</a>
         <a href="/season/drivers">Drivers</a>
         <a href="/season/teams">Teams</a>
         <a href={FIA_ANNOUNCEMENT} target="_blank" rel="noreferrer">

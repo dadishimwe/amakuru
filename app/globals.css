@@ -1450,3 +1450,32 @@ a.coverage-card { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .progression-switch button, .progression-action, .progression-option, .progression-chart .recharts-line path, .progression-chart .recharts-dot { transition: none; }
 }
+
+
+/* Public research-paper entry points */
+.technology-card-research figure {
+  grid-template-rows: 1fr auto;
+  justify-items: start;
+  align-items: end;
+  padding: 18px 20px;
+  background: radial-gradient(circle at 90% 12%, rgba(215, 229, 64, .28), transparent 34%), linear-gradient(135deg, #e9e8dc, #fbfaf3);
+}
+.technology-card-research figure span {
+  color: var(--ink);
+  font: 400 clamp(28px, 3vw, 39px)/.92 Georgia, 'Times New Roman', serif;
+  letter-spacing: -.045em;
+}
+.technology-card-research figure small {
+  color: var(--rwanda-green);
+  font: 600 9px/1.4 'Geist Mono', monospace;
+  letter-spacing: .08em;
+}
+.progression-paper-callout {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  background: #fbfaf3;
+}
+.progression-paper-callout .label { margin: 0 0 7px; }
+.progression-paper-callout p:last-child { margin: 0; color: #626a62; font-size: 12px; line-height: 1.75; }
+.progression-paper-callout a { color: var(--rwanda-green); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
