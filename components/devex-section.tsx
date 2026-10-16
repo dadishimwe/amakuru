@@ -1,8 +1,21 @@
 "use client"
 
 import { useState, useEffect } from "react"
+type DevexCodeLine = {
+  type: string
+  text?: string
+  after?: string
+  keyword2?: string
+  keyword3?: string
+  fn?: string
+  args?: string
+  key?: string
+  val?: string
+  string?: string
+}
+type DevexStep = { num: string; title: string; desc: string; file: string; lang: string; code: DevexCodeLine[] }
 
-const STEPS = [
+const STEPS: DevexStep[] = [
   {
     num: "01",
     title: "Curate",
@@ -75,7 +88,7 @@ const STEPS = [
   },
 ]
 
-function CodeLine({ line }: { line: (typeof STEPS)[0]["code"][0] }) {
+function CodeLine({ line }: { line: DevexCodeLine }) {
   if (line.type === "gap") return <div className="h-3" />
   if (line.type === "comment") return <div className="text-[#9ca3af]">{line.text}</div>
   if (line.type === "output") return <div className="text-[#6b7280]">{line.text}</div>

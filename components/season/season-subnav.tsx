@@ -2,6 +2,7 @@ const SECTIONS = [
   { href: "/season", label: "Schedule" },
   { href: "/season/results", label: "Results" },
   { href: "/season/standings", label: "Standings" },
+  { href: "/season/progression", label: "Progression" },
   { href: "/season/drivers", label: "Drivers" },
   { href: "/season/teams", label: "Teams" },
   { href: "/circuits", label: "Circuits" },

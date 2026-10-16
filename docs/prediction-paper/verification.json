@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "pdf": "/home/ubuntu/amakuru/docs/prediction-paper/amakuru-f1-winner-prediction.pdf",
+  "profile": "publication",
+  "overall": "PASS",
+  "checks": [
+    {
+      "name": "signature",
+      "status": "PASS",
+      "message": "PDF header is valid",
+      "evidence": {
+        "header": "%PDF-"
+      }
+    },
+    {
+      "name": "pdfinfo",
+      "status": "PASS",
+      "message": "PDF is parseable by pdfinfo",
+      "evidence": {}
+    },
+    {
+      "name": "page-count",
+      "status": "PASS",
+      "message": "pages=8",
+      "evidence": {
+        "pages": 8
+      }
+    },
+    {
+      "name": "page-size",
+      "status": "PASS",
+      "message": "595.276 x 841.89 pts (A4)",
+      "evidence": {}
+    },
+    {
+      "name": "metadata-title",
+      "status": "PASS",
+      "message": "expected='A Leakage-Safe Framework for Formula One Race-Winner Prediction', actual='A Leakage-Safe Framework for Formula One Race-Winner Prediction'",
+      "evidence": {}
+    },
+    {
+      "name": "metadata-author",
+      "status": "PASS",
+      "message": "expected='Dadi Ishimwe', actual='Dadi Ishimwe'",
+      "evidence": {}
+    },
+    {
+      "name": "text-presence",
+      "status": "PASS",
+      "message": "characters=23389",
+      "evidence": {}
+    },
+    {
+      "name": "placeholders",
+      "status": "PASS",
+      "message": "No placeholder markers found",
+      "evidence": {
+        "matches": []
+      }
+    },
+    {
+      "name": "fonts",
+      "status": "PASS",
+      "message": "font_records=6",
+      "evidence": {}
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { Crest, Portrait } from "@/components/season/season-media"
+import { ProgressionExplorer } from "@/components/season/progression-explorer"
 import { SeasonUnavailable } from "@/components/season/season-unavailable"
 import { ScheduleExplorer } from "@/components/season/schedule-explorer"
 import { SeasonFrame } from "@/components/season/season-frame"
@@ -124,6 +125,14 @@ export default async function SeasonPage() {
             </>
           )}
         </article>
+      </section>
+      <section className="season-section progression-section" aria-labelledby="progression-title">
+        <div className="progression-heading">
+          <p className="label label-acid">POINTS AFTER EACH ROUND</p>
+          <h2 className="season-section-title" id="progression-title">The championship, in motion.</h2>
+          <p className="season-support">Track cumulative driver or constructor points through completed rounds. Select a few to focus the comparison.</p>
+        </div>
+        <ProgressionExplorer progression={data.progression} />
       </section>
       <ScheduleExplorer rows={rows} />
       </>}

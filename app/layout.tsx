@@ -32,8 +32,8 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords: [...SITE_KEYWORDS],
-  authors: [{ name: SITE_NAME, url: SITE_URL }],
-  creator: SITE_NAME,
+  authors: [{ name: "Dadi Ishimwe", url: "https://blog.dadishimwe.com" }],
+  creator: "Dadi Ishimwe",
   publisher: SITE_NAME,
   category: "sports",
   robots: {
@@ -77,7 +77,18 @@ export const metadata: Metadata = {
     address: false,
   },
   icons: {
+    shortcut: "/icon.svg",
     icon: [
+      {
+        url: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
       {
         url: "/icon-light-32x32.png",
         media: "(prefers-color-scheme: light)",

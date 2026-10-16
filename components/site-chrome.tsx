@@ -124,6 +124,7 @@ export function SiteFooter() {
         <a href="/season">Schedule</a>
         <a href="/season/results">Results</a>
         <a href="/season/standings">Standings</a>
+        <a href="/season/progression">Progression</a>
         <a href="/season/drivers">Drivers</a>
         <a href="/season/teams">Teams</a>
         <a href={FIA_ANNOUNCEMENT} target="_blank" rel="noreferrer">
@@ -139,7 +140,7 @@ export function SiteFooter() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Amakuru Motorsport</span>
-        <span>INDEPENDENT EDITORIAL · DADI ISHIMWE · KIGALI, RWANDA</span>
+        <span>INDEPENDENT EDITORIAL · <a className="footer-author" href="https://blog.dadishimwe.com" target="_blank" rel="noreferrer">DADI ISHIMWE</a> · KIGALI, RWANDA</span>
       </div>
     </footer>
   )

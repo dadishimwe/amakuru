@@ -1,0 +1,11 @@
+{
+  "task_kind": "new-document",
+  "output": "pdf",
+  "signals": ["arxiv"],
+  "hard_constraints": ["technical research paper", "mathematical equations", "code snippets", "scholarly references"],
+  "content_features": {
+    "code_blocks": 3,
+    "defined_terms": 6,
+    "portrait_images": 0
+  }
+}

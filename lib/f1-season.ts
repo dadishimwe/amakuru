@@ -29,6 +29,7 @@ export type ImageCredit = {
   artist: string
   license: string
   licenseUrl: string
+  modification?: string
 }
 
 export type F1Result = {
@@ -42,6 +43,10 @@ export type F1Result = {
   Constructor?: F1Constructor
   Time?: { time?: string }
 }
+
+export type F1LapTiming = { driverId?: string; position?: string; time?: string }
+export type F1Lap = { number?: string; Timings?: F1LapTiming[] }
+export type RaceLapData = { laps: F1Lap[]; totalRecords: number; loadedRecords: number; complete: boolean }
 
 export type F1Race = {
   season?: string
@@ -61,6 +66,8 @@ export type F1Race = {
   Qualifying?: SessionStamp
   Sprint?: SessionStamp
   Results?: F1Result[]
+  SprintResults?: F1Result[]
+  Laps?: F1Lap[]
 }
 
 export type DriverStanding = {
@@ -163,45 +170,78 @@ export type F1SeasonData = {
   constructorStandings: ConstructorStanding[]
   gridDrivers: GridDriver[]
   gridTeams: GridTeam[]
+  progression: ChampionshipProgression
   latestRace: F1Race | null
   updatedAt: string
   unavailable: boolean
 }
 
-async function getAllSeasonResults(): Promise<F1Race[]> {
-  const first = await getJolpica("current/results.json?limit=100&offset=0")
-  const total = Number(first?.MRData?.total ?? 0)
-  const limit = Number(first?.MRData?.limit ?? 100) || 100
-  const pages = [first]
-  if (total > limit) {
-    const rest = []
-    for (let offset = limit; offset < total; offset += limit) {
-      rest.push(getJolpica(`current/results.json?limit=${limit}&offset=${offset}`))
-    }
-    pages.push(...await Promise.all(rest))
-  }
+export type ChampionshipRound = {
+  round: string
+  label: string
+  name: string
+  driverPoints: Record<string, number>
+  constructorPoints: Record<string, number>
+}
 
+export type ChampionshipProgression = {
+  rounds: ChampionshipRound[]
+  drivers: Array<{ id: string; name: string; code: string; teamId: string; team: string }>
+  constructors: Array<{ id: string; name: string }>
+}
+
+async function getSeasonRacePages(path: string): Promise<F1Race[]> {
+  const races: F1Race[] = []
+  let offset = 0
+  let limit = 100
+  let total = 0
+  do {
+    const page = await getJolpica(`${path}?limit=${limit}&offset=${offset}`)
+    if (!page) break
+    races.push(...(page.MRData?.RaceTable?.Races ?? []))
+    total = Number(page.MRData?.total ?? 0)
+    limit = Number(page.MRData?.limit ?? limit) || limit
+    offset += limit
+  } while (offset < total)
+  return races
+}
+
+async function getAllSeasonResults(): Promise<F1Race[]> {
+  const [grandPrixRows, sprintRows] = await Promise.all([
+    getSeasonRacePages("current/results.json"),
+    getSeasonRacePages("current/sprint.json"),
+  ])
   const byRound = new Map<string, F1Race>()
-  for (const page of pages) {
-    for (const race of page?.MRData?.RaceTable?.Races ?? []) {
-      const key = race.round || race.raceName || ""
-      const existing = byRound.get(key)
-      if (!existing) {
-        byRound.set(key, { ...race, Results: [...(race.Results ?? [])] })
-        continue
-      }
-      existing.Results = [...(existing.Results ?? []), ...(race.Results ?? [])]
-    }
+  for (const race of grandPrixRows) {
+    const key = race.round || race.raceName || ""
+    const existing = byRound.get(key)
+    byRound.set(key, {
+      ...existing,
+      ...race,
+      Results: [...(existing?.Results ?? []), ...(race.Results ?? [])],
+      SprintResults: existing?.SprintResults ?? [],
+    })
+  }
+  for (const race of sprintRows) {
+    const key = race.round || race.raceName || ""
+    const existing = byRound.get(key)
+    byRound.set(key, {
+      ...existing,
+      ...race,
+      Results: existing?.Results ?? [],
+      SprintResults: [...(existing?.SprintResults ?? []), ...(race.Results ?? [])],
+    })
   }
   return Array.from(byRound.values())
     .map((race) => ({
       ...race,
       Results: [...(race.Results ?? [])].sort((a, b) => Number(a.position) - Number(b.position)),
+      SprintResults: [...(race.SprintResults ?? [])].sort((a, b) => Number(a.position) - Number(b.position)),
     }))
     .sort((a, b) => Number(a.round) - Number(b.round))
 }
 
-async function getJolpica(path: string): Promise<JolpicaPayload | null> {
+export async function getJolpica(path: string): Promise<JolpicaPayload | null> {
   try {
     const response = await fetch(`${JOLPICA_BASE}/${path}`, {
       headers: { Accept: "application/json" },
@@ -212,6 +252,53 @@ async function getJolpica(path: string): Promise<JolpicaPayload | null> {
   } catch {
     return null
   }
+}
+
+export async function getRaceLapData(season: string, round: string): Promise<RaceLapData> {
+  if (!/^\d{4}$/.test(season) || !/^\d+$/.test(round)) {
+    return { laps: [], totalRecords: 0, loadedRecords: 0, complete: false }
+  }
+  const path = `${season}/${round}/laps.json`
+  const first = await getJolpica(`${path}?limit=100&offset=0`)
+  if (!first) return { laps: [], totalRecords: 0, loadedRecords: 0, complete: false }
+
+  const totalRecords = Number(first.MRData?.total ?? 0)
+  let limit = Number(first.MRData?.limit ?? 100) || 100
+  let offset = limit
+  const pages = [first]
+  let loadedRecords = (first.MRData?.RaceTable?.Races ?? [])
+    .flatMap((race) => race.Laps ?? [])
+    .reduce((sum, lap) => sum + (lap.Timings?.length ?? 0), 0)
+  while (offset < totalRecords) {
+    const page = await getJolpica(`${path}?limit=${limit}&offset=${offset}`)
+    if (!page) break
+    pages.push(page)
+    const rows = (page.MRData?.RaceTable?.Races ?? []).flatMap((race) => race.Laps ?? [])
+    loadedRecords += rows.reduce((sum, lap) => sum + (lap.Timings?.length ?? 0), 0)
+    limit = Number(page.MRData?.limit ?? limit) || limit
+    offset += limit
+  }
+
+  const byLap = new Map<string, Map<string, F1LapTiming>>()
+  for (const page of pages) {
+    for (const race of page.MRData?.RaceTable?.Races ?? []) {
+      for (const lap of race.Laps ?? []) {
+        if (!lap.number) continue
+        const timings = byLap.get(lap.number) ?? new Map<string, F1LapTiming>()
+        for (const timing of lap.Timings ?? []) {
+          if (timing.driverId) timings.set(timing.driverId, timing)
+        }
+        byLap.set(lap.number, timings)
+      }
+    }
+  }
+  const laps = Array.from(byLap.entries())
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([number, timings]) => ({
+      number,
+      Timings: Array.from(timings.values()).sort((a, b) => Number(a.position) - Number(b.position)),
+    }))
+  return { laps, totalRecords, loadedRecords, complete: totalRecords > 0 && loadedRecords >= totalRecords }
 }
 
 export function personName(driver?: F1Driver): string {
@@ -277,6 +364,21 @@ export function teamDisplayName(id?: string, fallback?: string): string {
 }
 
 type WikiImageAsset = { url: string; fileName: string; credit: ImageCredit }
+
+const CURATED_DRIVER_ASSETS: Record<string, WikiImageAsset> = {
+  hamilton: {
+    url: "/images/drivers/lewis-hamilton.webp",
+    fileName: "Lewis Hamilton 2016 Malaysia 2.jpg",
+    credit: {
+      fileName: "Lewis Hamilton 2016 Malaysia 2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Lewis_Hamilton_2016_Malaysia_2.jpg",
+      artist: "Morio",
+      license: "CC BY-SA 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+      modification: "Converted to WebP for responsive delivery; original photograph from 2016.",
+    },
+  },
+}
 
 function commonsFileName(rawUrl: string): string {
   try {
@@ -413,6 +515,68 @@ async function wikiThumbnails(titles: string[]): Promise<Map<string, WikiImageAs
   return verified
 }
 
+function buildChampionshipProgression(
+  races: F1Race[],
+  drivers: GridDriver[],
+  constructors: GridTeam[],
+): ChampionshipProgression {
+  const driverMeta = new Map(drivers.map((driver) => [driver.id, {
+    id: driver.id,
+    name: driver.name,
+    code: driver.code,
+    teamId: driver.teamId,
+    team: driver.team,
+  }]))
+  const constructorMeta = new Map(constructors.map((team) => [team.id, { id: team.id, name: team.name }]))
+  const driverTotals = new Map(drivers.map((driver) => [driver.id, 0]))
+  const constructorTotals = new Map(constructors.map((team) => [team.id, 0]))
+  const rounds: ChampionshipRound[] = []
+
+  for (const race of races) {
+    for (const result of [...(race.SprintResults ?? []), ...(race.Results ?? [])]) {
+      const points = Number(result.points ?? 0)
+      if (!Number.isFinite(points)) continue
+      const driverId = result.Driver?.driverId
+      const constructorId = result.Constructor?.constructorId
+      if (driverId) {
+        driverTotals.set(driverId, (driverTotals.get(driverId) ?? 0) + points)
+        if (!driverMeta.has(driverId)) {
+          driverMeta.set(driverId, {
+            id: driverId,
+            name: personName(result.Driver) || driverId,
+            code: result.Driver?.code || "",
+            teamId: constructorId || "",
+            team: teamDisplayName(constructorId, result.Constructor?.name),
+          })
+        }
+      }
+      if (constructorId) {
+        constructorTotals.set(constructorId, (constructorTotals.get(constructorId) ?? 0) + points)
+        if (!constructorMeta.has(constructorId)) {
+          constructorMeta.set(constructorId, {
+            id: constructorId,
+            name: teamDisplayName(constructorId, result.Constructor?.name) || constructorId,
+          })
+        }
+      }
+    }
+    const round = race.round || String(rounds.length + 1)
+    rounds.push({
+      round,
+      label: `R${round.padStart(2, "0")}`,
+      name: race.raceName || "Grand Prix",
+      driverPoints: Object.fromEntries(driverTotals),
+      constructorPoints: Object.fromEntries(constructorTotals),
+    })
+  }
+
+  return {
+    rounds,
+    drivers: Array.from(driverMeta.values()).sort((a, b) => (driverTotals.get(b.id) ?? 0) - (driverTotals.get(a.id) ?? 0)),
+    constructors: Array.from(constructorMeta.values()).sort((a, b) => (constructorTotals.get(b.id) ?? 0) - (constructorTotals.get(a.id) ?? 0)),
+  }
+}
+
 export async function getF1SeasonData(): Promise<F1SeasonData> {
   const [schedule, driverCatalog, constructorCatalog, drivers, constructors, resultRaces] = await Promise.all([
     getJolpica("current.json?limit=100"),
@@ -513,7 +677,8 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
   }
   const picturedDrivers = gridDrivers.map((driver) => {
     const asset = assetFor(driver.wikipedia)
-    return { ...driver, image: asset?.url || "", imageCredit: asset?.credit ?? null }
+    const curated = CURATED_DRIVER_ASSETS[driver.id]
+    return { ...driver, image: asset?.url || curated?.url || "", imageCredit: asset?.credit ?? curated?.credit ?? null }
   })
   const driverById = new Map(picturedDrivers.map((driver) => [driver.id, driver]))
   const picturedTeams = gridTeams.map((team) => ({
@@ -554,6 +719,7 @@ export async function getF1SeasonData(): Promise<F1SeasonData> {
     constructorStandings: constructorRows,
     gridDrivers: picturedDrivers,
     gridTeams: picturedTeams,
+    progression: buildChampionshipProgression(completedRaces, picturedDrivers, picturedTeams),
     latestRace: picturedSchedule.find((race) => race.round === latestRound) ?? null,
     updatedAt: new Date().toISOString(),
     unavailable: schedule == null,

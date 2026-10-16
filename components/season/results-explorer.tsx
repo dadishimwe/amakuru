@@ -34,6 +34,7 @@ export function ResultsExplorer({ races, initialRound }: { races: ClassifiedRace
       ) : null}
       <h2 className="season-section-title" id="results-title">{race.name}</h2>
       <p className="season-support">{race.place}{race.circuit ? <> · <a href={race.circuitId ? `/circuits/${race.circuitId}` : "/circuits"}>{race.circuit}</a></> : ""} · {race.when}</p>
+      <a className="race-progress-link" href={`/season/results/${race.round}`}>Explore lap-by-lap positions <span aria-hidden="true">↗</span></a>
       <div className="season-toolbar">
         <SeasonSelect
           label="Round"

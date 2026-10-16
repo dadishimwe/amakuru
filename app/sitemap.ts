@@ -38,7 +38,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/guides/championship-points`, lastModified, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/season`, lastModified, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/season/results`, lastModified, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE_URL}/season/progression`, lastModified, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/season/standings`, lastModified, changeFrequency: "daily", priority: 0.8 },
+    ...data.classifiedRaces.map((race) => ({
+      url: `${SITE_URL}/season/results/${race.round}`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    })),
     { url: `${SITE_URL}/season/drivers`, lastModified, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/season/teams`, lastModified, changeFrequency: "weekly", priority: 0.7 },
     ...data.gridDrivers.map((driver) => ({
