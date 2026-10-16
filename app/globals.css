@@ -1159,6 +1159,85 @@ a.coverage-card { color: inherit; text-decoration: none; }
 }
 .rb22-views button[aria-selected="true"] { color: var(--ink); background: var(--acid); border-color: var(--acid); }
 .rb22-hint { margin-top: 12px !important; color: rgba(242,241,233,.48) !important; font: 500 10px/1.4 'Geist Mono', monospace !important; letter-spacing: .06em; text-transform: uppercase; }
+.rb22-play-lead { margin-top: 18px !important; }
+.rb22-play-trigger {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rwanda-green);
+  font: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.rb22-play-trigger:hover { color: var(--ink); }
+.rb22-play-dialog {
+  width: min(1100px, calc(100vw - 32px));
+  max-width: none;
+  height: min(820px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(11, 17, 16, .28);
+}
+.rb22-play-dialog::backdrop { background: rgba(11, 17, 16, .72); }
+.rb22-play-panel {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.rb22-play-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.rb22-play-bar h2 {
+  margin: 6px 0 0;
+  font: 400 clamp(22px, 3vw, 32px)/1.1 Georgia, 'Times New Roman', serif;
+  letter-spacing: -.035em;
+}
+.rb22-play-close {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: 650 10px/1 'Geist Mono', monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.rb22-play-close:hover { background: var(--acid); border-color: var(--acid); }
+.rb22-play-frame {
+  position: relative;
+  min-height: 0;
+  background: #121a3d;
+}
+.rb22-play-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.rb22-play-credit {
+  margin: 0;
+  padding: 12px 18px 14px;
+  border-top: 1px solid var(--line);
+  color: #59615b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.rb22-play-credit a { color: var(--rwanda-green); }
 .rb22-after { padding-top: 64px; padding-bottom: 88px; }
 .rb22-notes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 22px; }
 .rb22-notes article { padding: 16px; border: 1px solid var(--line); background: #fbfaf3; }

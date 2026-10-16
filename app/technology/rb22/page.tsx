@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { SiteFooter, SiteNavigation } from "@/components/site-chrome"
+import { Rb22Play } from "@/components/technology/rb22-play"
 import { Rb22StageLoader } from "@/components/technology/rb22-stage-loader"
 import { RB22_CREDIT, RB22_VIEWS } from "@/lib/rb22-story"
 import { breadcrumbJsonLd, seasonMetadata } from "@/lib/season-page"
@@ -52,6 +53,10 @@ export default function Rb22Page() {
           <p>
             The car stays in view. Scrolling turns it from the side, to the nose, to the tail, then overhead. It is Dave’s model of the RB22, shared under Creative Commons. It is not an official Red Bull drawing, and it is not the unbranded schematic on the car-design page.
           </p>
+          <p className="rb22-play-lead">
+            Want to turn it yourself?{" "}
+            <Rb22Play label="Open the free viewer" /> — Sketchfab in a window you can close when you are done.
+          </p>
         </header>
         <Rb22StageLoader />
         <section className="rb22-after">
@@ -66,7 +71,8 @@ export default function Rb22Page() {
             ))}
           </div>
           <p className="article-source-note">
-            Model: <a href={RB22_CREDIT.modelUrl} target="_blank" rel="noreferrer">{RB22_CREDIT.title} by {RB22_CREDIT.author}</a>, licensed <a href={RB22_CREDIT.licenseUrl} target="_blank" rel="noreferrer">{RB22_CREDIT.license}</a>. The dimension limits cited here come from the published 2026 regulations, not from measuring this file.
+            Model: <a href={RB22_CREDIT.modelUrl} target="_blank" rel="noreferrer">{RB22_CREDIT.title} by {RB22_CREDIT.author}</a>, licensed <a href={RB22_CREDIT.licenseUrl} target="_blank" rel="noreferrer">{RB22_CREDIT.license}</a>. The dimension limits cited here come from the published 2026 regulations, not from measuring this file.{" "}
+            <Rb22Play label="Open free viewer" />
           </p>
           <div className="season-jump-links">
             <a href="/technology/car-design">Car schematic</a>

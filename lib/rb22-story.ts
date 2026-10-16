@@ -5,6 +5,9 @@ export const RB22_CREDIT = {
   author: "Dave",
   authorUrl: "https://sketchfab.com/Tyler_Dave",
   modelUrl: "https://sketchfab.com/3d-models/2026-redbull-rb22-0a3d24a58e0549d591a5a48c22eec383",
+  /** Sketchfab embed for free orbit / zoom (scroll story stays self-hosted). */
+  embedUrl:
+    "https://sketchfab.com/models/0a3d24a58e0549d591a5a48c22eec383/embed?autostart=1&ui_theme=dark&ui_infos=0&ui_controls=1&ui_stop=0&ui_inspector=0&ui_watermark=1&ui_watermark_link=1",
   license: "CC BY 4.0",
   licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
 }
